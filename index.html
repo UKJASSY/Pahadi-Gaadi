@@ -70,7 +70,13 @@
     <h3>Book Your Ride</h3><input type="text" id="pickup" placeholder="Enter Pickup Location">
 <input type="text" id="drop" placeholder="Enter Drop Location">
 
-<button onclick="bookRide()">Book Ride</button>
+<h4>Select Vehicle</h4>
+
+<div style="display:flex; gap:10px; margin-bottom:15px;">
+  <button onclick="bookRide('Bike 🏍️')">🏍️ Bike</button>
+  <button onclick="bookRide('Car 🚗')">🚗 Car</button>
+  <button onclick="bookRide('SUV 🚙')">🚙 SUV</button>
+</div>
 
   </div>  <div class="contact">
     📞 Contact: +91-9761857987
