@@ -4,7 +4,61 @@
   <meta charset="UTF-8">
   <title>PahadiGaadi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+<style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+    }
+
+    header {
+      background: #020617;
+      padding: 15px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 30px;
+    }
+
+    .container {
+      background: white;
+      color: black;
+      margin: 20px;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background: green;
+      color: white;
+      border: none;
+    }
+  </style>  <!-- 👇 YE TERA JS CODE (REHNE DE) -->  <script>
+    function bookRide() {
+      let pickup = document.querySelector("input[placeholder='Enter Pickup Location']").value;
+      let drop = document.querySelector("input[placeholder='Enter Drop Location']").value;
+
+      if(pickup === "" || drop === "") {
+        alert("Bhai dono location daal 😅");
+        return;
+      }
+
+      alert("Ride booked from " + pickup + " to " + drop + " 🚗");
+    }
+  </script></head>
   <script>
 function bookRide() {
   let pickup = document.querySelector("input[placeholder='Enter Pickup Location']").value;
