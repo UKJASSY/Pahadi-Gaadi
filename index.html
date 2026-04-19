@@ -43,12 +43,20 @@
 }
 
     button {
-      width: 100%;
-      padding: 10px;
-      background: green;
-      color: white;
-      border: none;
-    }
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(45deg, #22c55e, #16a34a);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
   </style>  <!-- 👇 YE TERA JS CODE (REHNE DE) -->  <script>
     function bookRide() {
       let pickup = document.querySelector("input[placeholder='Enter Pickup Location']").value;
