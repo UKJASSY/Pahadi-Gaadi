@@ -75,37 +75,41 @@
   </div>  <div class="contact">
     📞 Contact: +91-9761857987
   </div>  <!-- ✅ SCRIPT HAMESHA YAHAN HOGA -->  <script>
-    function bookRide() {
-let pickup = document.getElementById("pickup").value;
-let drop = document.getElementById("drop").value;
+    <script>
+function bookRide() {
+  let pickup = document.getElementById("pickup").value;
+  let drop = document.getElementById("drop").value;
 
-if(pickup === "" || drop === "") {
-alert("Bhai dono location daal 😅");
-return;
+  if(pickup === "" || drop === "") {
+    alert("Bhai dono location daal 😅");
+    return;
+  }
+
+  let vehicle = prompt("Vehicle choose karo:\n1. Bike 🏍️\n2. Car 🚗\n3. SUV 🚙");
+
+  if(vehicle === null) return;
+
+  let vehicleName = "";
+
+  if(vehicle == "1") vehicleName = "Bike 🏍️";
+  else if(vehicle == "2") vehicleName = "Car 🚗";
+  else if(vehicle == "3") vehicleName = "SUV 🚙";
+  else {
+    alert("Sahi option daal bhai 😅");
+    return;
+  }
+
+  let message = `🚗 PahadiGaadi Booking
+
+📍 Pickup: ${pickup}
+🏁 Drop: ${drop}
+🚘 Vehicle: ${vehicleName}`;
+
+  let phone = "919761857987";
+
+  let whatsappURL = "https://wa.me/" + phone + "?text=" + encodeURIComponent(message);
+
+  window.open(whatsappURL, "_blank");
 }
-
-let vehicle = prompt("Vehicle choose karo:\n1. Bike 🏍️\n2. Car 🚗\n3. SUV 🚙");
-
-if(vehicle === null) return;
-
-let vehicleName = "";
-
-if(vehicle == "1") vehicleName = "Bike 🏍️";
-else if(vehicle == "2") vehicleName = "Car 🚗";
-else if(vehicle == "3") vehicleName = "SUV 🚙";
-else {
-alert("Sahi option daal bhai 😅");
-return;
-}
-
-let message = "🚗 PahadiGaadi Booking%0A%0A📍 Pickup: " + pickup +
-"%0A🏁 Drop: " + drop +
-"%0A🚘 Vehicle: " + vehicleName;
-
-let phone = "919761857987";
-
-let whatsappURL = "https://wa.me/" + phone + "?text=" + message;
-
-window.open(whatsappURL, "_blank");
-}  </script></body>
+</script>}  </script></body>
 </html>
