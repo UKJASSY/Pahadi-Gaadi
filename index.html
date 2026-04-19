@@ -109,6 +109,18 @@
       }
     }
   </script>
+<script>
+function bookRide() {
+  let pickup = document.querySelector("input[placeholder='Enter Pickup Location']").value;
+  let drop = document.querySelector("input[placeholder='Enter Drop Location']").value;
 
+  if(pickup === "" || drop === "") {
+    alert("Bhai dono location daal 😅");
+    return;
+  }
+
+  alert("Ride booked from " + pickup + " to " + drop + " 🚗");
+}
+</script>
 </body>
 </html>
