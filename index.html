@@ -5,74 +5,19 @@
   <title>PahadiGaadi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f7fb;
-    }
+  <script>
+function bookRide() {
+  let pickup = document.querySelector("input[placeholder='Enter Pickup Location']").value;
+  let drop = document.querySelector("input[placeholder='Enter Drop Location']").value;
 
-    header {
-      background: #0f172a;
-      color: white;
-      padding: 15px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-    }
+  if(pickup === "" || drop === "") {
+    alert("Bhai dono location daal 😅");
+    return;
+  }
 
-    .hero {
-      text-align: center;
-      padding: 40px 20px;
-    }
-
-    .hero h1 {
-      margin-bottom: 10px;
-      color: #0f172a;
-    }
-
-    .hero p {
-      color: #555;
-    }
-
-    .container {
-      max-width: 400px;
-      margin: 20px auto;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #2563eb;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #1d4ed8;
-    }
-
-    .contact {
-      text-align: center;
-      margin-top: 20px;
-      color: #444;
-    }
-  </style>
+  alert("Ride booked from " + pickup + " to " + drop + " 🚗");
+}
+</script>
 </head>
 
 <body>
