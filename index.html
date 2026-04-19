@@ -70,8 +70,28 @@
         return;
       }
 
-      let url = "https://www.google.com/maps/dir/" + pickup + "/" + drop;
-      window.open(url, "_blank");
+      <script>
+function bookRide() {
+  let pickup = document.querySelector("#pickup").value;
+  let drop = document.querySelector("#drop").value;
+
+  if(pickup === "" || drop === "") {
+    alert("Bhai dono location daal 😅");
+    return;
+  }
+
+  // WhatsApp message
+  let message = "🚗 PahadiGaadi Booking%0A%0A📍 Pickup: " + pickup + "%0A🏁 Drop: " + drop;
+
+  // Apna number yaha daal (without +)
+  let phone = "91XXXXXXXXXX";
+
+  let whatsappURL = "https://wa.me/" + phone + "?text=" + message;
+
+  // WhatsApp open karega
+  window.open(whatsappURL, "_blank");
+}
+</script>
     }
   </script></head><body>  <header>
     <img src="logo.png" style="height:40px;">
