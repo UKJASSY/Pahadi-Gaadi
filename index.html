@@ -76,15 +76,17 @@ button:hover {
   </script></head>
   <script>
 function bookRide() {
-  let pickup = document.querySelector("input[placeholder='Enter Pickup Location']").value;
-  let drop = document.querySelector("input[placeholder='Enter Drop Location']").value;
+  let pickup = document.querySelector("#pickup").value;
+  let drop = document.querySelector("#drop").value;
 
   if(pickup === "" || drop === "") {
     alert("Bhai dono location daal 😅");
     return;
   }
 
-  alert("Ride booked from " + pickup + " to " + drop + " 🚗");
+  // Google Maps open karega
+  let url = "https://www.google.com/maps/dir/" + pickup + "/" + drop;
+  window.open(url, "_blank");
 }
 </script>
 </head>
