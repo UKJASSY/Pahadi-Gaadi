@@ -60,25 +60,7 @@
       margin: 20px;
       color: #e2e8f0;
     }
-  </style>  <script>
-    function bookRide() {
-      let pickup = document.querySelector("#pickup").value;
-      let drop = document.querySelector("#drop").value;
-
-      if(pickup === "" || drop === "") {
-        alert("Bhai dono location daal 😅");
-        return;
-      }
-
-      let message = "🚗 PahadiGaadi Booking%0A%0A📍 Pickup: " + pickup + "%0A🏁 Drop: " + drop;
-
-      let phone = "919761857987"; // apna number
-
-      let whatsappURL = "https://wa.me/" + phone + "?text=" + message;
-
-      window.open(whatsappURL, "_blank");
-    }
-  </script></head><body>  <header>
+  </style></head><body>  <header>
     <img src="logo.png" style="height:40px;">
     <span>PahadiGaadi</span>
   </header>  <div class="hero">
@@ -92,5 +74,23 @@
 
   </div>  <div class="contact">
     📞 Contact: +91-9761857987
-  </div></body>
+  </div>  <!-- ✅ SCRIPT HAMESHA YAHAN HOGA -->  <script>
+    function bookRide() {
+      let pickup = document.getElementById("pickup").value;
+      let drop = document.getElementById("drop").value;
+
+      if(pickup === "" || drop === "") {
+        alert("Bhai dono location daal 😅");
+        return;
+      }
+
+      let message = "🚗 PahadiGaadi Booking%0A%0A📍 Pickup: " + pickup + "%0A🏁 Drop: " + drop;
+
+      let phone = "919761857987";
+
+      let whatsappURL = "https://wa.me/" + phone + "?text=" + message;
+
+      window.open(whatsappURL, "_blank");
+    }
+  </script></body>
 </html>
