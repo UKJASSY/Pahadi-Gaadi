@@ -82,40 +82,27 @@
     📞 Contact: +91-9761857987
   </div>  <!-- ✅ SCRIPT HAMESHA YAHAN HOGA -->  <script>
     
-function bookRide() {
-  let pickup = document.getElementById("pickup").value;
-  let drop = document.getElementById("drop").value;
+function bookRide(vehicleName) {
+let pickup = document.getElementById("pickup").value.trim();
+let drop = document.getElementById("drop").value.trim();
 
-  if(pickup === "" || drop === "") {
-    alert("Bhai dono location daal 😅");
-    return;
-  }
+if (pickup === "" || drop === "") {
+alert("Bhai dono location daal 😅");
+return;
+}
 
-  let vehicle = prompt("Vehicle choose karo:\n1. Bike 🏍️\n2. Car 🚗\n3. SUV 🚙");
-
-  if(vehicle === null) return;
-
-  let vehicleName = "";
-
-  if(vehicle == "1") vehicleName = "Bike 🏍️";
-  else if(vehicle == "2") vehicleName = "Car 🚗";
-  else if(vehicle == "3") vehicleName = "SUV 🚙";
-  else {
-    alert("Sahi option daal bhai 😅");
-    return;
-  }
-
-  let message = `🚗 PahadiGaadi Booking
+// WhatsApp message
+let message = `🚗 PahadiGaadi Booking
 
 📍 Pickup: ${pickup}
 🏁 Drop: ${drop}
 🚘 Vehicle: ${vehicleName}`;
 
-  let phone = "919761857987";
+let phone = "919761857987";
 
-  let whatsappURL = "https://wa.me/" + phone + "?text=" + encodeURIComponent(message);
+let url = "https://wa.me/" + phone + "?text=" + encodeURIComponent(message);
 
-  window.open(whatsappURL, "_blank");
+window.open(url, "_blank");
 }
-</script>}  </script></body>
+  </script>}  </script></body>
 </html>
