@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>PahadiGaadi</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -13,16 +11,15 @@
     }
 
     header {
-  background: #020617;
-  padding: 15px;
-  text-align: center;
-  font-size: 22px;
-  font-weight: bold;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-}
+      background: #020617;
+      padding: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      font-size: 22px;
+      font-weight: bold;
+    }
 
     .hero {
       text-align: center;
@@ -34,112 +31,61 @@
       color: black;
       margin: 20px;
       padding: 20px;
-      border-radius: 10px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     }
 
     input {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 16px;
-}
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
 
     button {
-  width: 100%;
-  padding: 12px;
-  background: linear-gradient(45deg, #22c55e, #16a34a);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: bold;
-  transition: 0.3s;
-}
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(45deg, #22c55e, #16a34a);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+    }
 
-button:hover {
-  transform: scale(1.05);
-}
-  </style>  <!-- 👇 YE TERA JS CODE (REHNE DE) -->  <script>
+    .contact {
+      text-align: center;
+      margin: 20px;
+      color: #e2e8f0;
+    }
+  </style>  <script>
     function bookRide() {
-      let pickup = document.querySelector("input[placeholder='Enter Pickup Location']").value;
-      let drop = document.querySelector("input[placeholder='Enter Drop Location']").value;
+      let pickup = document.querySelector("#pickup").value;
+      let drop = document.querySelector("#drop").value;
 
       if(pickup === "" || drop === "") {
         alert("Bhai dono location daal 😅");
         return;
       }
 
-      alert("Ride booked from " + pickup + " to " + drop + " 🚗");
+      let url = "https://www.google.com/maps/dir/" + pickup + "/" + drop;
+      window.open(url, "_blank");
     }
-  </script></head>
-  <script>
-function bookRide() {
-  let pickup = document.querySelector("#pickup").value;
-  let drop = document.querySelector("#drop").value;
-
-  if(pickup === "" || drop === "") {
-    alert("Bhai dono location daal 😅");
-    return;
-  }
-
-  // Google Maps open karega
-  let url = "https://www.google.com/maps/dir/" + pickup + "/" + drop;
-  window.open(url, "_blank");
-}
-</script>
-</head>
-
-<body>
-
-  <header>
-  <img src="logo.png" style="height:50px; vertical-align:middle;">
-  <span>PahadiGaadi</span>
-</header>
-
-  <div class="hero">
+  </script></head><body>  <header>
+    <img src="logo.png" style="height:40px;">
+    <span>PahadiGaadi</span>
+  </header>  <div class="hero">
     <h1>Your Ride in the Hills</h1>
     <p>Fast • Safe • Reliable</p>
-  </div>
+  </div>  <div class="container">
+    <h3>Book Your Ride</h3><input type="text" id="pickup" placeholder="Enter Pickup Location">
+<input type="text" id="drop" placeholder="Enter Drop Location">
 
-  <div class="container">
-    <h3>Book Your Ride</h3>
+<button onclick="bookRide()">Book Ride</button>
 
-    <input type="text" id="pickup" placeholder="Enter Pickup Location">
-    <input type="text" id="drop" placeholder="Enter Drop Location">
-
-    <button onclick="bookRide()">Book Ride</button>
-  </div>
-
-  <div class="contact">
+  </div>  <div class="contact">
     📞 Contact: +91-XXXXXXXXXX
-  </div>
-
-  <script>
-    function bookRide() {
-      let pickup = document.getElementById("pickup").value;
-      let drop = document.getElementById("drop").value;
-
-      if(pickup === "" || drop === "") {
-        alert("Please enter both locations!");
-      } else {
-        alert("Ride booked from " + pickup + " to " + drop);
-      }
-    }
-  </script>
-<script>
-function bookRide() {
-  let pickup = document.querySelector("input[placeholder='Enter Pickup Location']").value;
-  let drop = document.querySelector("input[placeholder='Enter Drop Location']").value;
-
-  if(pickup === "" || drop === "") {
-    alert("Bhai dono location daal 😅");
-    return;
-  }
-
-  alert("Ride booked from " + pickup + " to " + drop + " 🚗");
-}
-</script>
-</body>
+  </div></body>
 </html>
