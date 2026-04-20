@@ -179,6 +179,40 @@ function success(position) {
   } else {
     marker = L.marker([lat, lon]).addTo(map);
   }
+  let pickupMarker, dropMarker;
+
+function updateMap(type) {
+  let location = document.getElementById(type).value;
+
+  if (location.length < 5) return;
+
+ fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data && data.length > 0) {
+        let lat = data[0].lat;
+        let lon = data[0].lon;
+
+        map.setView([lat, lon], 13);
+
+        if (type === "pickup") {
+          if (pickupMarker) {
+            pickupMarker.setLatLng([lat, lon]);
+          } else {
+            pickupMarker = L.marker([lat, lon]).addTo(map)
+              .bindPopup("Pickup Location").openPopup();
+          }
+        } else {
+          if (dropMarker) {
+            dropMarker.setLatLng([lat, lon]);
+          } else {
+            dropMarker = L.marker([lat, lon]).addTo(map)
+              .bindPopup("Drop Location").openPopup();
+          }
+        }
+      }
+    });
+}
 }
 function selectVehicle(element, vehicle) {
   document.querySelectorAll('.vehicle').forEach(v => v.classList.remove('active'));
