@@ -4,10 +4,8 @@
 <meta charset="UTF-8">
 <title>PahadiGaadi</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
 <style>
 body {
   margin: 0;
@@ -16,6 +14,7 @@ body {
   color: white;
 }
 
+/* HEADER */
 header {
   background: #020617;
   padding: 15px;
@@ -27,30 +26,46 @@ header {
   font-weight: bold;
 }
 
+/* HERO */
 .hero {
   text-align: center;
   padding: 25px;
 }
 
+.hero h1 {
+  margin: 0;
+  font-size: 26px;
+}
+
+.hero p {
+  color: #94a3b8;
+}
+
+/* CARD */
 .container {
   background: white;
   color: black;
   margin: 20px;
   padding: 20px;
   border-radius: 20px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.3);
 }
 
+/* INPUT */
 input {
   width: 100%;
   padding: 14px;
   margin: 10px 0;
   border-radius: 12px;
   border: 1px solid #ddd;
+  font-size: 15px;
 }
 
+/* VEHICLE */
 .vehicle-box {
   display: flex;
   gap: 10px;
+  margin-bottom: 15px;
 }
 
 .vehicle {
@@ -60,14 +75,195 @@ input {
   border-radius: 12px;
   border: 2px solid #ddd;
   cursor: pointer;
+  transition: 0.3s;
+  font-weight: bold;
+}
+
+.vehicle:hover {
+  border-color: #0f172a;
 }
 
 .vehicle.active {
   background: #0f172a;
   color: white;
+  border-color: #0f172a;
 }
 
+/* BUTTON */
 .book-btn {
   width: 100%;
   padding: 14px;
-  background
+  background: linear-gradient(45deg, #22c55e, #16a34a);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* CONTACT */
+.contact {
+  text-align: center;
+  margin: 20px;
+  color: #e2e8f0;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+  <img src="logo.png" style="height:40px;">
+  <span>PahadiGaadi</span>
+</header>
+
+<div class="hero">
+  <h1>Your Ride in the Hills</h1>
+  <p>Fast • Safe • Reliable</p>
+</div>
+
+<div class="container">
+  <h3>Book Your Ride</h3>
+
+  <div style="position: relative;">
+ <input type="text" id="pickup" placeholder="📍 Pickup Location" oninput="updateMap('pickup')">
+  
+  <button onclick="getLocation()" 
+    style="position:absolute; right:5px; top:5px; padding:6px 8px; font-size:11px; border:none; border-radius:6px; background:#0f172a; color:white;">
+    📍
+  </button>
+</div>
+  <input type="text" id="drop" placeholder="🏁 Drop Location" oninput="updateMap('drop')">
+
+  <h4>Select Vehicle</h4>
+
+  <div class="vehicle-box">
+    <div class="vehicle" onclick="selectVehicle(this, 'Bike 🏍️')">🏍️ Bike</div>
+    <div class="vehicle" onclick="selectVehicle(this, 'Car 🚗')">🚗 Car</div>
+    <div class="vehicle" onclick="selectVehicle(this, 'SUV 🚙')">🚙 SUV</div>
+  </div>
+
+  <button class="book-btn" onclick="bookRide()">Book Ride</button>
+</div>
+<div id="map" style="height:300px; margin:20px; border-radius:15px;"></div>
+<div class="contact">
+  📞 Contact: +91-9761857987
+</div>
+
+<script>
+let selectedVehicle = "";
+  let map = L.map('map').setView([30.3165, 78.0322], 13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+}).addTo(map);
+
+let marker;
+function success(position) {
+  let lat = position.coords.latitude;
+  let lon = position.coords.longitude;
+
+  fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+  .then(response => response.json())
+  .then(data => {
+    let address = data.display_name;
+    document.getElementById("pickup").value = address;
+  });
+
+  map.setView([lat, lon], 15);
+
+  if (marker) {
+    marker.setLatLng([lat, lon]);
+  } else {
+    marker = L.marker([lat, lon]).addTo(map);
+  }
+  let pickupMarker, dropMarker;
+
+function updateMap(type) {
+  let location = document.getElementById(type).value;
+
+  if (location.length < 5) return;
+
+ fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data && data.length > 0) {
+        let lat = data[0].lat;
+        let lon = data[0].lon;
+
+        map.setView([lat, lon], 13);
+
+        if (type === "pickup") {
+          if (pickupMarker) {
+            pickupMarker.setLatLng([lat, lon]);
+          } else {
+            pickupMarker = L.marker([lat, lon]).addTo(map)
+              .bindPopup("Pickup Location").openPopup();
+          }
+        } else {
+          if (dropMarker) {
+            dropMarker.setLatLng([lat, lon]);
+          } else {
+            dropMarker = L.marker([lat, lon]).addTo(map)
+              .bindPopup("Drop Location").openPopup();
+          }
+        }
+      }
+    });
+}
+}
+function selectVehicle(element, vehicle) {
+  document.querySelectorAll('.vehicle').forEach(v => v.classList.remove('active'));
+  element.classList.add('active');
+  selectedVehicle = vehicle;
+}
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(success, error);
+  } else {
+    alert("Location support nahi hai 😅");
+  }
+}
+
+function success(position) {
+  let lat = position.coords.latitude;
+  let lon = position.coords.longitude;
+
+  document.getElementById("pickup").value = lat + ", " + lon;
+}
+
+function error() {
+  alert("Location allow kar bhai 😅");
+}
+function bookRide() {
+  let pickup = document.getElementById("pickup").value.trim();
+  let drop = document.getElementById("drop").value.trim();
+
+  if (pickup === "" || drop === "") {
+    alert("Bhai dono location daal 😅");
+    return;
+  }
+
+  if (selectedVehicle === "") {
+    alert("Vehicle select kar bhai 😅");
+    return;
+  }
+
+  let message = `🚗 PahadiGaadi Booking
+
+📍 Pickup: ${pickup}
+🏁 Drop: ${drop}
+🚘 Vehicle: ${selectedVehicle}`;
+
+  let phone = "919761857987";
+
+  let url = "https://wa.me/" + phone + "?text=" + encodeURIComponent(message);
+
+  window.open(url, "_blank");
+}
+</script>
+
+</body>
+</html>
