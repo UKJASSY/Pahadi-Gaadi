@@ -1,108 +1,185 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>PahadiGaadi</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
-    }
+<meta charset="UTF-8">
+<title>PahadiGaadi</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    header {
-      background: #020617;
-      padding: 15px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      font-size: 22px;
-      font-weight: bold;
-    }
-
-    .hero {
-      text-align: center;
-      padding: 30px;
-    }
-
-    .container {
-      background: white;
-      color: black;
-      margin: 20px;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    }
-
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background: linear-gradient(45deg, #22c55e, #16a34a);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: bold;
-    }
-
-    .contact {
-      text-align: center;
-      margin: 20px;
-      color: #e2e8f0;
-    }
-  </style></head><body>  <header>
-    <img src="logo.png" style="height:40px;">
-    <span>PahadiGaadi</span>
-  </header>  <div class="hero">
-    <h1>Your Ride in the Hills</h1>
-    <p>Fast • Safe • Reliable</p>
-  </div>  <div class="container">
-    <h3>Book Your Ride</h3><input type="text" id="pickup" placeholder="Enter Pickup Location">
-<input type="text" id="drop" placeholder="Enter Drop Location">
-
-<h4>Select Vehicle</h4>
-
-<div style="display:flex; gap:10px; margin-bottom:15px;">
-  <button onclick="bookRide('Bike 🏍️')">🏍️ Bike</button>
-  <button onclick="bookRide('Car 🚗')">🚗 Car</button>
-  <button onclick="bookRide('SUV 🚙')">🚙 SUV</button>
-</div>
-
-  </div>  <div class="contact">
-    📞 Contact: +91-9761857987
-  </div>  <!-- ✅ SCRIPT HAMESHA YAHAN HOGA -->  <script>
-    
-function bookRide(vehicleName) {
-let pickup = document.getElementById("pickup").value.trim();
-let drop = document.getElementById("drop").value.trim();
-
-if (pickup === "" || drop === "") {
-alert("Bhai dono location daal 😅");
-return;
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #0f172a;
+  color: white;
 }
 
-// WhatsApp message
-let message = `🚗 PahadiGaadi Booking
+/* HEADER */
+header {
+  background: #020617;
+  padding: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+/* HERO */
+.hero {
+  text-align: center;
+  padding: 25px;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: 26px;
+}
+
+.hero p {
+  color: #94a3b8;
+}
+
+/* CARD */
+.container {
+  background: white;
+  color: black;
+  margin: 20px;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+}
+
+/* INPUT */
+input {
+  width: 100%;
+  padding: 14px;
+  margin: 10px 0;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+}
+
+/* VEHICLE */
+.vehicle-box {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.vehicle {
+  flex: 1;
+  padding: 12px;
+  text-align: center;
+  border-radius: 12px;
+  border: 2px solid #ddd;
+  cursor: pointer;
+  transition: 0.3s;
+  font-weight: bold;
+}
+
+.vehicle:hover {
+  border-color: #0f172a;
+}
+
+.vehicle.active {
+  background: #0f172a;
+  color: white;
+  border-color: #0f172a;
+}
+
+/* BUTTON */
+.book-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(45deg, #22c55e, #16a34a);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* CONTACT */
+.contact {
+  text-align: center;
+  margin: 20px;
+  color: #e2e8f0;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+  <img src="logo.png" style="height:40px;">
+  <span>PahadiGaadi</span>
+</header>
+
+<div class="hero">
+  <h1>Your Ride in the Hills</h1>
+  <p>Fast • Safe • Reliable</p>
+</div>
+
+<div class="container">
+  <h3>Book Your Ride</h3>
+
+  <input type="text" id="pickup" placeholder="📍 Pickup Location">
+  <input type="text" id="drop" placeholder="🏁 Drop Location">
+
+  <h4>Select Vehicle</h4>
+
+  <div class="vehicle-box">
+    <div class="vehicle" onclick="selectVehicle(this, 'Bike 🏍️')">🏍️ Bike</div>
+    <div class="vehicle" onclick="selectVehicle(this, 'Car 🚗')">🚗 Car</div>
+    <div class="vehicle" onclick="selectVehicle(this, 'SUV 🚙')">🚙 SUV</div>
+  </div>
+
+  <button class="book-btn" onclick="bookRide()">Book Ride</button>
+</div>
+
+<div class="contact">
+  📞 Contact: +91-9761857987
+</div>
+
+<script>
+let selectedVehicle = "";
+
+function selectVehicle(element, vehicle) {
+  document.querySelectorAll('.vehicle').forEach(v => v.classList.remove('active'));
+  element.classList.add('active');
+  selectedVehicle = vehicle;
+}
+
+function bookRide() {
+  let pickup = document.getElementById("pickup").value.trim();
+  let drop = document.getElementById("drop").value.trim();
+
+  if (pickup === "" || drop === "") {
+    alert("Bhai dono location daal 😅");
+    return;
+  }
+
+  if (selectedVehicle === "") {
+    alert("Vehicle select kar bhai 😅");
+    return;
+  }
+
+  let message = `🚗 PahadiGaadi Booking
 
 📍 Pickup: ${pickup}
 🏁 Drop: ${drop}
-🚘 Vehicle: ${vehicleName}`;
+🚘 Vehicle: ${selectedVehicle}`;
 
-let phone = "919761857987";
+  let phone = "919761857987";
 
-let url = "https://wa.me/" + phone + "?text=" + encodeURIComponent(message);
+  let url = "https://wa.me/" + phone + "?text=" + encodeURIComponent(message);
 
-window.open(url, "_blank");
+  window.open(url, "_blank");
 }
-  </script>}  </script></body>
+</script>
+
+</body>
 </html>
