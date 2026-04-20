@@ -187,7 +187,32 @@ function updateMap(type) {
       }
     });
 }
+let selecting = "pickup";
 
+function setSelecting(type) {
+  selecting = type;
+}
+
+map.on('click', function(e) {
+  let lat = e.latlng.lat;
+  let lon = e.latlng.lng;
+
+  if (marker) {
+    marker.setLatLng([lat, lon]);
+  } else {
+    marker = L.marker([lat, lon]).addTo(map);
+  }
+
+  fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+    .then(res => res.json())
+    .then(data => {
+      if (selecting === "pickup") {
+        document.getElementById("pickup").value = data.display_name;
+      } else {
+        document.getElementById("drop").value = data.display_name;
+      }
+    });
+});
 // 🚗 VEHICLE
 function selectVehicle(el, v) {
   document.querySelectorAll('.vehicle').forEach(x => x.classList.remove('active'));
