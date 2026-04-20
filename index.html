@@ -104,12 +104,12 @@ input {
 <div class="container">
 
   <div style="position: relative;">
-    <input type="text" id="pickup" placeholder="📍 Pickup Location" oninput="updateMap('pickup')">
+    <input type="text" id="pickup" placeholder="📍 Pickup Location" oninput="updateMap('pickup')" onclick="setSelecting('pickup')">
     <button onclick="getLocation()" 
     style="position:absolute; right:5px; top:5px;">📍</button>
   </div>
 
-  <input type="text" id="drop" placeholder="🏁 Drop Location" oninput="updateMap('drop')">
+  <input type="text" id="drop" placeholder="🏁 Drop Location" oninput="updateMap('drop')" onclick="setSelecting('drop')">
 
   <div class="vehicle-box">
     <div class="vehicle" onclick="selectVehicle(this, 'Bike')">Bike</div>
