@@ -169,40 +169,35 @@ function success(position) {
 
   showRoute();
 }
-function updateMap(type) {
-  let location = document.getElementById(type).value;
+function success(position) {
+  let lat = position.coords.latitude;
+  let lon = position.coords.longitude;
 
-  if (location.length < 3) return;
-
-  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}`)
+  fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
     .then(res => res.json())
     .then(data => {
-      if (data.length > 0) {
-        let lat = data[0].lat;
-        let lon = data[0].lon;
+      document.getElementById("pickup").value = data.display_name;
+    });
 
-        map.setView([lat, lon], 13);
+  map.setView([lat, lon], 15);
 
-        if (type === "pickup") {
-          if (pickupMarker) {
-            pickupMarker.setLatLng([lat, lon]);
-          } else {
-            pickupMarker = L.marker([lat, lon]).addTo(map);
-          }
-        } else {
-          if (dropMarker) {
-            dropMarker.setLatLng([lat, lon]);
-         } else {
- 
-    dropMarker = L.marker([lat, lon]).addTo(map);
+  if (selecting === "pickup") {
+    if (pickupMarker) {
+      pickupMarker.setLatLng([lat, lon]);
+    } else {
+      pickupMarker = L.marker([lat, lon]).addTo(map);
+    }
+  } else {
+    if (dropMarker) {
+      dropMarker.setLatLng([lat, lon]);
+    } else {
+      dropMarker = L.marker([lat, lon]).addTo(map);
+    }
   }
-}
 
-showRoute();  
-} 
-});
+  showRoute();
 }
-let selecting = "pickup";
+  let selecting = "pickup";
 
 function setSelecting(type) {
   selecting = type;
