@@ -166,7 +166,8 @@ function success(position) {
     dropMarker = L.marker([lat, lon]).addTo(map);
   }
 }
-
+showRoute();
+}
 // 🔥 TYPE KARTE HI MAP UPDATE
 function updateMap(type) {
   let location = document.getElementById(type).value;
@@ -198,9 +199,7 @@ function updateMap(type) {
 }
 
 showRoute();  
-
-}  //
-
+} 
 });
 }
 let selecting = "pickup";
