@@ -126,7 +126,14 @@ input {
 <div class="container">
   <h3>Book Your Ride</h3>
 
+  <div style="position: relative;">
   <input type="text" id="pickup" placeholder="📍 Pickup Location">
+  
+  <button onclick="getLocation()" 
+    style="position:absolute; right:5px; top:5px; padding:6px 8px; font-size:11px; border:none; border-radius:6px; background:#0f172a; color:white;">
+    📍
+  </button>
+</div>
   <input type="text" id="drop" placeholder="🏁 Drop Location">
 
   <h4>Select Vehicle</h4>
