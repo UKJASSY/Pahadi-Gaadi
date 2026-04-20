@@ -159,7 +159,24 @@ function selectVehicle(element, vehicle) {
   element.classList.add('active');
   selectedVehicle = vehicle;
 }
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(success, error);
+  } else {
+    alert("Location support nahi hai 😅");
+  }
+}
 
+function success(position) {
+  let lat = position.coords.latitude;
+  let lon = position.coords.longitude;
+
+  document.getElementById("pickup").value = lat + ", " + lon;
+}
+
+function error() {
+  alert("Location allow kar bhai 😅");
+}
 function bookRide() {
   let pickup = document.getElementById("pickup").value.trim();
   let drop = document.getElementById("drop").value.trim();
