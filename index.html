@@ -146,29 +146,29 @@ function success(position) {
   let lon = position.coords.longitude;
 
   fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
-  .then(res => res.json())
-  .then(data => {
-    document.getElementById("pickup").value = data.display_name;
-  });
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("pickup").value = data.display_name;
+    });
 
   map.setView([lat, lon], 15);
 
   if (selecting === "pickup") {
-  if (pickupMarker) {
-    pickupMarker.setLatLng([lat, lon]);
+    if (pickupMarker) {
+      pickupMarker.setLatLng([lat, lon]);
+    } else {
+      pickupMarker = L.marker([lat, lon]).addTo(map);
+    }
   } else {
-    pickupMarker = L.marker([lat, lon]).addTo(map);
+    if (dropMarker) {
+      dropMarker.setLatLng([lat, lon]);
+    } else {
+      dropMarker = L.marker([lat, lon]).addTo(map);
+    }
   }
-} else {
-  if (dropMarker) {
-    dropMarker.setLatLng([lat, lon]);
-  } else {
-    dropMarker = L.marker([lat, lon]).addTo(map);
-  }
+
+  showRoute();
 }
-showRoute();
-}
-// 🔥 TYPE KARTE HI MAP UPDATE
 function updateMap(type) {
   let location = document.getElementById(type).value;
 
