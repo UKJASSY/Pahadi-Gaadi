@@ -144,17 +144,42 @@ input {
     <div class="vehicle" onclick="selectVehicle(this, 'Car 🚗')">🚗 Car</div>
     <div class="vehicle" onclick="selectVehicle(this, 'SUV 🚙')">🚙 SUV</div>
   </div>
-<div id="map" style="height:300px; margin:20px; border-radius:15px;"></div>
+
   <button class="book-btn" onclick="bookRide()">Book Ride</button>
 </div>
-
+<div id="map" style="height:300px; margin:20px; border-radius:15px;"></div>
 <div class="contact">
   📞 Contact: +91-9761857987
 </div>
 
 <script>
 let selectedVehicle = "";
+  let map = L.map('map').setView([30.3165, 78.0322], 13);
 
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+}).addTo(map);
+
+let marker;
+function success(position) {
+  let lat = position.coords.latitude;
+  let lon = position.coords.longitude;
+
+  fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+  .then(response => response.json())
+  .then(data => {
+    let address = data.display_name;
+    document.getElementById("pickup").value = address;
+  });
+
+  map.setView([lat, lon], 15);
+
+  if (marker) {
+    marker.setLatLng([lat, lon]);
+  } else {
+    marker = L.marker([lat, lon]).addTo(map);
+  }
+}
 function selectVehicle(element, vehicle) {
   document.querySelectorAll('.vehicle').forEach(v => v.classList.remove('active'));
   element.classList.add('active');
