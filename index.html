@@ -8,6 +8,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
@@ -37,14 +41,10 @@ header {
   padding: 4px;
 }
 
-.toggle {
-  cursor: pointer;
-}
-
 /* HERO */
 .hero {
   text-align: center;
-  padding: 15px;
+  padding: 10px;
 }
 
 /* CARD */
@@ -56,31 +56,32 @@ header {
   border-radius: 20px;
 }
 
-/* INPUT BOX FIX */
+/* INPUT */
 .input-box {
   position: relative;
+  margin-bottom: 12px;
 }
 
-input {
+.input-box input {
   width: 100%;
-  padding: 14px;
-  margin: 10px 0;
+  padding: 14px 45px 14px 14px;
   border-radius: 12px;
   border: 1px solid #ddd;
+  font-size: 14px;
 }
 
-/* 📍 BUTTON FIX */
+/* LOCATION BUTTON */
 .loc-btn {
   position: absolute;
-  right: 10px;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   background: #0f172a;
   color: white;
   border: none;
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   cursor: pointer;
 }
 
@@ -88,6 +89,7 @@ input {
 .vehicle-box {
   display: flex;
   gap: 10px;
+  margin-top: 10px;
 }
 
 .vehicle {
@@ -112,7 +114,8 @@ input {
   color: white;
   border: none;
   border-radius: 12px;
-  margin-top: 10px;
+  margin-top: 15px;
+  font-size: 16px;
 }
 
 /* MAP */
@@ -143,7 +146,6 @@ input {
     <img src="logo.png">
     <span>PahadiGaadi</span>
   </div>
-  <div onclick="toggleMode()">🌙</div>
 </header>
 
 <div class="hero">
@@ -152,21 +154,27 @@ input {
 
 <div class="container">
 
-  <!-- FIXED INPUT -->
+  <!-- Pickup -->
   <div class="input-box">
     <input type="text" id="pickup" placeholder="📍 Pickup Location" oninput="showRoute()">
     <button onclick="getLocation()" class="loc-btn">📍</button>
   </div>
 
-  <input type="text" id="drop" placeholder="🏁 Drop Location" oninput="showRoute()">
-
-  <div class="vehicle-box">
-    <div class="vehicle" onclick="selectVehicle(this, 'Bike')">🏍 Bike</div>
-    <div class="vehicle" onclick="selectVehicle(this, 'Car')">🚗 Car</div>
-    <div class="vehicle" onclick="selectVehicle(this, 'SUV')">🚙 SUV</div>
+  <!-- Drop -->
+  <div class="input-box">
+    <input type="text" id="drop" placeholder="🏁 Drop Location" oninput="showRoute()">
   </div>
 
+  <!-- Vehicles -->
+  <div class="vehicle-box">
+    <div class="vehicle" onclick="selectVehicle(this,'Bike')">🏍 Bike</div>
+    <div class="vehicle" onclick="selectVehicle(this,'Car')">🚗 Car</div>
+    <div class="vehicle" onclick="selectVehicle(this,'SUV')">🚙 SUV</div>
+  </div>
+
+  <!-- Book -->
   <button class="book-btn" onclick="bookRide()">Book Ride</button>
+
 </div>
 
 <div id="map"></div>
@@ -179,10 +187,6 @@ input {
 <script>
 let selectedVehicle = "";
 let map, marker, directionsService, directionsRenderer;
-
-function toggleMode() {
-  document.body.classList.toggle("dark");
-}
 
 function initMap() {
   const defaultLocation = { lat: 28.6139, lng: 77.2090 };
@@ -253,11 +257,22 @@ function bookRide() {
   let pickup = document.getElementById("pickup").value;
   let drop = document.getElementById("drop").value;
 
-  let msg = `Pickup: ${pickup} | Drop: ${drop} | Vehicle: ${selectedVehicle}`;
+  if (!pickup || !drop || !selectedVehicle) {
+    alert("Bhai sab fill kar 😅");
+    return;
+  }
+
+  let msg = `🚕 PahadiGaadi Booking
+
+Pickup: ${pickup}
+Drop: ${drop}
+Vehicle: ${selectedVehicle}`;
+
   window.open("https://wa.me/919761857987?text=" + encodeURIComponent(msg));
 }
 </script>
 
+<!-- API KEY YAHAN DAAL -->
 <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
 
 </body>
