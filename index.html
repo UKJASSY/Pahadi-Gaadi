@@ -111,69 +111,60 @@ input {
 <div id="map" style="height:300px; margin:20px;"></div>
 
 <script>
-
 let selectedVehicle = "";
-let map = L.map('map').setView([30.3165, 78.0322], 13);
+let map, marker, geocoder;
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+// 🚀 INIT MAP
+function initMap() {
+  const defaultLocation = { lat: 28.6139, lng: 77.2090 };
 
-let marker;
-let pickupMarker, dropMarker;
-
-// 📍 LOCATION BUTTON
-function getLocation() {
-  navigator.geolocation.getCurrentPosition(success);
-}
-
-function success(position) {
-  let lat = position.coords.latitude;
-  let lon = position.coords.longitude;
-
-  fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
-  .then(res => res.json())
-  .then(data => {
-    document.getElementById("pickup").value = data.display_name;
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: defaultLocation,
+    zoom: 13,
   });
 
-  map.setView([lat, lon], 15);
+  marker = new google.maps.Marker({
+    position: defaultLocation,
+    map: map,
+    draggable: true,
+  });
 
-  if (marker) {
-    marker.setLatLng([lat, lon]);
-  } else {
-    marker = L.marker([lat, lon]).addTo(map);
+  geocoder = new google.maps.Geocoder();
+
+  marker.addListener("dragend", function () {
+    const position = marker.getPosition();
+
+    geocoder.geocode({ location: position }, function (results, status) {
+      if (status === "OK" && results[0]) {
+        document.getElementById("pickup").value = results[0].formatted_address;
+      }
+    });
+  });
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition((position) => {
+      const userLocation = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      };
+
+      map.setCenter(userLocation);
+      marker.setPosition(userLocation);
+    });
   }
 }
 
-// 🔥 TYPE KARTE HI MAP UPDATE
-function updateMap(type) {
-  let location = document.getElementById(type).value;
+// 📍 LOCATION BUTTON
+function getLocation() {
+  navigator.geolocation.getCurrentPosition((position) => {
+    const userLocation = {
+      lat: position.coords.latitude,
+      lng: position.coords.longitude,
+    };
 
-  if (location.length < 3) return;
-
-  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}`)
-    .then(res => res.json())
-    .then(data => {
-      if (data.length > 0) {
-        let lat = data[0].lat;
-        let lon = data[0].lon;
-
-        map.setView([lat, lon], 13);
-
-        if (type === "pickup") {
-          if (pickupMarker) {
-            pickupMarker.setLatLng([lat, lon]);
-          } else {
-            pickupMarker = L.marker([lat, lon]).addTo(map);
-          }
-        } else {
-          if (dropMarker) {
-            dropMarker.setLatLng([lat, lon]);
-          } else {
-            dropMarker = L.marker([lat, lon]).addTo(map);
-          }
-        }
-      }
-    });
+    map.setCenter(userLocation);
+    marker.setPosition(userLocation);
+  });
 }
 
 // 🚗 VEHICLE
@@ -191,8 +182,6 @@ function bookRide() {
   let msg = `Pickup: ${pickup} | Drop: ${drop} | Vehicle: ${selectedVehicle}`;
   window.open("https://wa.me/919761857987?text=" + encodeURIComponent(msg));
 }
-
 </script>
-
 </body>
 </html>
