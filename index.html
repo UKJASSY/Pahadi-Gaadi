@@ -5,10 +5,13 @@
 <title>PahadiGaadi</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- 🔤 FONT -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
 <style>
 body {
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Poppins', sans-serif;
   background: linear-gradient(to right, #0f172a, #1e293b);
   color: white;
   transition: 0.3s;
@@ -22,24 +25,33 @@ body {
 /* HEADER */
 header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 15px;
+  align-items: center;
+  padding: 15px 20px;
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .logo img {
-  width: 40px;
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  background: white;
+  padding: 5px;
+}
+
+.logo span {
+  font-size: 20px;
+  font-weight: 600;
 }
 
 .toggle {
   cursor: pointer;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 /* HERO */
@@ -100,9 +112,17 @@ input {
   color: white;
   border: none;
   border-radius: 12px;
-  font-size: 17px;
+  font-size: 16px;
+  font-weight: 600;
   margin-top: 10px;
-  cursor: pointer;
+}
+
+/* MAP */
+#map {
+  height: 300px;
+  margin: 20px;
+  border-radius: 15px;
+  overflow: hidden;
 }
 
 /* 📱 BOTTOM SHEET */
@@ -119,7 +139,7 @@ input {
 
 /* PRICE */
 .price {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
   color: green;
 }
@@ -165,9 +185,9 @@ input {
   <button class="book-btn" onclick="bookRide()">Book Ride</button>
 </div>
 
-<div id="map" style="height:300px; margin:20px;"></div>
+<div id="map"></div>
 
-<!-- 📱 BOTTOM INFO -->
+<!-- 📱 BOTTOM -->
 <div class="bottom-sheet">
   Distance: <span id="distance">0</span> km <br>
   Fare: ₹<span id="price" class="price">0</span>
@@ -182,7 +202,7 @@ function toggleMode() {
   document.body.classList.toggle("dark");
 }
 
-// MAP INIT
+// MAP
 function initMap() {
   const defaultLocation = { lat: 28.6139, lng: 77.2090 };
 
