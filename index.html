@@ -262,7 +262,16 @@ const marker = new google.maps.Marker({
   map: map,
   draggable: true,
 });
+const geocoder = new google.maps.Geocoder();
+    marker.addListener("dragend", function () {
+  const position = marker.getPosition();
 
+  geocoder.geocode({ location: position }, function (results, status) {
+    if (status === "OK" && results[0]) {
+      document.getElementById("pickup").value = results[0].formatted_address;
+    }
+  });
+});
 // 📍 Auto detect location
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition((position) => {
