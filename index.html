@@ -277,11 +277,11 @@ if (navigator.geolocation) {
       lat: position.coords.latitude,
       lng: position.coords.longitude,
     };
-
     map.setCenter(userLocation);
     marker.setPosition(userLocation);
   });
 }
+  }
 function bookRide() {
   let pickup = document.getElementById("pickup").value;
   let drop = document.getElementById("drop").value;
