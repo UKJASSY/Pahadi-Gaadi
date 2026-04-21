@@ -5,12 +5,6 @@
 <title>PahadiGaadi</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css"/>
-<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
 <style>
 body {
   margin: 0;
@@ -128,14 +122,6 @@ input {
 <script>
 
 let selectedVehicle = "";
-let map = L.map('map').setView([30.3165, 78.0322], 13);
-
-let routeControl;
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-let pickupMarker, dropMarker;
-
 // 📍 LOCATION BUTTON
 function getLocation() {
   navigator.geolocation.getCurrentPosition(success);
@@ -263,6 +249,20 @@ function showRoute() {
   }
 }
 // 📲 BOOK
+  function initMap() {
+  const location = { lat: 28.6139, lng: 77.2090 }; // default location
+
+  const map = new google.maps.Map(document.getElementById("map"), {
+    center: location,
+    zoom: 13,
+  });
+
+  const marker = new google.maps.Marker({
+    position: location,
+    map: map,
+    draggable: true,
+  });
+}
 function bookRide() {
   let pickup = document.getElementById("pickup").value;
   let drop = document.getElementById("drop").value;
@@ -272,6 +272,6 @@ function bookRide() {
 }
 
 </script>
-
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdQvXgtRqcUX-Vo2ngB_xL2V-cxCydmTI&libraries=places&callback=initMap" async defer></script>
 </body>
 </html>
