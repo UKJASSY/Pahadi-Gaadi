@@ -154,7 +154,14 @@ header {
 </div>
 
 <div class="container">
+<!-- USER PROFILE -->
+<div class="input-box">
+  <input type="text" id="name" placeholder="👤 Your Name">
+</div>
 
+<div class="input-box">
+  <input type="tel" id="phone" placeholder="📞 Phone Number">
+</div>
   <!-- Pickup -->
   <div class="input-box">
     <input type="text" id="pickup" placeholder="📍 Pickup Location" oninput="showRoute()">
@@ -171,10 +178,12 @@ header {
     <div class="vehicle" onclick="selectVehicle(this,'Car')">🚗 Car</div>
     <div class="vehicle" onclick="selectVehicle(this,'SUV')">🚙 SUV</div>
   </div>
+  
+  <!-- Save Profile -->
+<button onclick="saveUser()" class="book-btn">Save Profile</button>
 
-  <!-- Book -->
-  <button class="book-btn" onclick="bookRide()">Book Ride</button>
-
+<!-- Book -->
+<button class="book-btn" onclick="bookRide()">Book Ride</button>
 </div>
 
 <div id="map"></div>
@@ -187,7 +196,20 @@ header {
 <script>
 let selectedVehicle = "";
 let map, marker, directionsService, directionsRenderer;
+function saveUser() {
+  let name = document.getElementById("name").value;
+  let phone = document.getElementById("phone").value;
 
+  if (!name || !phone) {
+    alert("Profile fill kar bhai 😅");
+    return;
+  }
+
+  localStorage.setItem("userName", name);
+  localStorage.setItem("userPhone", phone);
+
+  alert("Profile saved ✅");
+}
 function initMap() {
   const defaultLocation = { lat: 28.6139, lng: 77.2090 };
 
@@ -252,23 +274,34 @@ function showRoute() {
     }
   });
 }
-
 function bookRide() {
+  let name = document.getElementById("name").value;
+  let phone = document.getElementById("phone").value;
   let pickup = document.getElementById("pickup").value;
   let drop = document.getElementById("drop").value;
 
-  if (!pickup || !drop || !selectedVehicle) {
+  if (!name || !phone || !pickup || !drop || !selectedVehicle) {
     alert("Bhai sab fill kar 😅");
     return;
   }
+  // save data
+  localStorage.setItem("userName", name);
+  localStorage.setItem("userPhone", phone);
 
   let msg = `🚕 PahadiGaadi Booking
 
-Pickup: ${pickup}
-Drop: ${drop}
-Vehicle: ${selectedVehicle}`;
+👤 Name: ${name}
+📞 Phone: ${phone}
+
+📍 Pickup: ${pickup}
+🏁 Drop: ${drop}
+🚗 Vehicle: ${selectedVehicle}`;
 
   window.open("https://wa.me/919761857987?text=" + encodeURIComponent(msg));
+}
+  window.onload = function () {
+  document.getElementById("name").value = localStorage.getItem("userName") || "";
+  document.getElementById("phone").value = localStorage.getItem("userPhone") || "";
 }
 </script>
 
