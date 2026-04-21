@@ -107,7 +107,8 @@ input {
 
   <button class="book-btn" onclick="bookRide()">Book Ride</button>
 </div>
-
+<p>Distance: <span id="distance">0</span></p>
+<p>Price: ₹<span id="price">0</span></p>
 <div id="map" style="height:300px; margin:20px;"></div>
 
 <script>
@@ -188,11 +189,26 @@ function showRoute() {
     travelMode: 'DRIVING',
   };
 
-  directionsService.route(request, function(result, status) {
-    if (status === 'OK') {
-      directionsRenderer.setDirections(result);
-    }
-  });
+directionsService.route(request, function(result, status) {
+  if (status === "OK") {
+
+    directionsRenderer.setDirections(result);
+
+    let distanceInMeters = result.routes[0].legs[0].distance.value;
+    let distanceInKm = (distanceInMeters / 1000).toFixed(2);
+
+    let rate = 0;
+
+    if (selectedVehicle === "Bike") rate = 3.5;
+    else if (selectedVehicle === "Car") rate = 5;
+    else if (selectedVehicle === "SUV") rate = 8;
+
+    let price = distanceInKm * rate;
+
+    console.log("Distance:", distanceInKm + " km");
+    console.log("Price:", price);
+  }
+});
 }
 // 📲 BOOK
 function bookRide() {
