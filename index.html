@@ -142,6 +142,27 @@ header {
 
 <body>
 
+<!-- 🔐 LOGIN SCREEN -->
+<div id="loginScreen" style="padding:30px; text-align:center;">
+
+  <h2>PahadiGaadi Login</h2>
+
+  <div class="input-box">
+    <input type="text" id="loginName" placeholder="👤 Your Name">
+  </div>
+
+  <div class="input-box">
+    <input type="tel" id="loginPhone" placeholder="📞 Phone Number">
+  </div>
+
+  <button class="book-btn" onclick="loginUser()">Continue</button>
+
+</div>
+
+
+<!-- 🚗 RIDE SCREEN -->
+<div id="rideScreen" style="display:none;">
+
 <header>
   <div class="logo">
     <img src="logo.png">
@@ -154,14 +175,7 @@ header {
 </div>
 
 <div class="container">
-<!-- USER PROFILE -->
-<div class="input-box">
-  <input type="text" id="name" placeholder="👤 Your Name">
-</div>
 
-<div class="input-box">
-  <input type="tel" id="phone" placeholder="📞 Phone Number">
-</div>
   <!-- Pickup -->
   <div class="input-box">
     <input type="text" id="pickup" placeholder="📍 Pickup Location" oninput="showRoute()">
@@ -178,12 +192,9 @@ header {
     <div class="vehicle" onclick="selectVehicle(this,'Car')">🚗 Car</div>
     <div class="vehicle" onclick="selectVehicle(this,'SUV')">🚙 SUV</div>
   </div>
-  
-  <!-- Save Profile -->
-<button onclick="saveUser()" class="book-btn">Save Profile</button>
 
-<!-- Book -->
-<button class="book-btn" onclick="bookRide()">Book Ride</button>
+  <button class="book-btn" onclick="bookRide()">Book Ride</button>
+
 </div>
 
 <div id="map"></div>
@@ -193,6 +204,123 @@ header {
   Fare: ₹<span id="price" class="price">0</span>
 </div>
 
+</div>
+
+
+<script>
+let selectedVehicle = "";
+let map, marker, directionsService, directionsRenderer;
+
+// 🔐 LOGIN FUNCTION
+function loginUser() {
+  let name = document.getElementById("loginName").value;
+  let phone = document.getElementById("loginPhone").value;
+
+  if (!name || !phone) {
+    alert("Bhai details fill kar 😅");
+    return;
+  }
+
+  localStorage.setItem("userName", name);
+  localStorage.setItem("userPhone", phone);
+
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("rideScreen").style.display = "block";
+}
+
+// 🚀 AUTO LOGIN
+window.onload = function () {
+  let name = localStorage.getItem("userName");
+  let phone = localStorage.getItem("userPhone");
+
+  if (name && phone) {
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("rideScreen").style.display = "block";
+  }
+}
+
+// MAP + RIDE FUNCTIONS
+function initMap() {
+  const defaultLocation = { lat: 28.6139, lng: 77.2090 };
+
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: defaultLocation,
+    zoom: 13,
+  });
+
+  marker = new google.maps.Marker({
+    position: defaultLocation,
+    map: map,
+  });
+
+  directionsService = new google.maps.DirectionsService();
+  directionsRenderer = new google.maps.DirectionsRenderer();
+  directionsRenderer.setMap(map);
+}
+
+function selectVehicle(el, v) {
+  document.querySelectorAll('.vehicle').forEach(x => x.classList.remove('active'));
+  el.classList.add('active');
+  selectedVehicle = v;
+  showRoute();
+}
+
+function showRoute() {
+  let pickup = document.getElementById("pickup").value;
+  let drop = document.getElementById("drop").value;
+
+  if (!pickup || !drop) return;
+
+  directionsService.route({
+    origin: pickup,
+    destination: drop,
+    travelMode: 'DRIVING',
+  }, function(result, status) {
+
+    if (status === "OK") {
+      directionsRenderer.setDirections(result);
+
+      let km = (result.routes[0].legs[0].distance.value / 1000).toFixed(2);
+
+      let rate = selectedVehicle === "Bike" ? 3.5 :
+                 selectedVehicle === "Car" ? 5 :
+                 selectedVehicle === "SUV" ? 8 : 0;
+
+      let price = km * rate;
+
+      document.getElementById("distance").innerText = km;
+      document.getElementById("price").innerText = Math.round(price);
+    }
+  });
+}
+
+function bookRide() {
+  let name = localStorage.getItem("userName");
+  let phone = localStorage.getItem("userPhone");
+  let pickup = document.getElementById("pickup").value;
+  let drop = document.getElementById("drop").value;
+
+  if (!pickup || !drop || !selectedVehicle) {
+    alert("Bhai sab fill kar 😅");
+    return;
+  }
+
+  let msg = `🚕 PahadiGaadi Booking
+
+👤 Name: ${name}
+📞 Phone: ${phone}
+
+📍 Pickup: ${pickup}
+🏁 Drop: ${drop}
+🚗 Vehicle: ${selectedVehicle}`;
+
+  window.open("https://wa.me/919761857987?text=" + encodeURIComponent(msg));
+}
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+
+</body>
 <script>
 let selectedVehicle = "";
 let map, marker, directionsService, directionsRenderer;
