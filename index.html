@@ -250,17 +250,29 @@ function showRoute() {
 }
 // 📲 BOOK
   function initMap() {
-  const location = { lat: 28.6139, lng: 77.2090 }; // default location
+  const defaultLocation = { lat: 28.6139, lng: 77.2090 };
 
-  const map = new google.maps.Map(document.getElementById("map"), {
-    center: location,
-    zoom: 13,
-  });
+const map = new google.maps.Map(document.getElementById("map"), {
+  center: defaultLocation,
+  zoom: 13,
+});
 
-  const marker = new google.maps.Marker({
-    position: location,
-    map: map,
-    draggable: true,
+const marker = new google.maps.Marker({
+  position: defaultLocation,
+  map: map,
+  draggable: true,
+});
+
+// 📍 Auto detect location
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition((position) => {
+    const userLocation = {
+      lat: position.coords.latitude,
+      lng: position.coords.longitude,
+    };
+
+    map.setCenter(userLocation);
+    marker.setPosition(userLocation);
   });
 }
 function bookRide() {
