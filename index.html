@@ -5,7 +5,6 @@
 <title>PahadiGaadi</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- 🔤 FONT -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
@@ -14,12 +13,6 @@ body {
   font-family: 'Poppins', sans-serif;
   background: linear-gradient(to right, #0f172a, #1e293b);
   color: white;
-  transition: 0.3s;
-}
-
-/* 🌙 DARK MODE */
-.dark {
-  background: #020617;
 }
 
 /* HEADER */
@@ -37,27 +30,21 @@ header {
 }
 
 .logo img {
-  width: 60px;
-  height: 60px;
-  border-radius: 12px;
+  width: 55px;
+  height: 55px;
+  border-radius: 10px;
   background: white;
-  padding: 5px;
-}
-
-.logo span {
-  font-size: 20px;
-  font-weight: 600;
+  padding: 4px;
 }
 
 .toggle {
   cursor: pointer;
-  font-size: 20px;
 }
 
 /* HERO */
 .hero {
   text-align: center;
-  padding: 20px;
+  padding: 15px;
 }
 
 /* CARD */
@@ -67,8 +54,11 @@ header {
   margin: 20px;
   padding: 20px;
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-  animation: fadeIn 0.5s ease;
+}
+
+/* INPUT BOX FIX */
+.input-box {
+  position: relative;
 }
 
 input {
@@ -77,6 +67,21 @@ input {
   margin: 10px 0;
   border-radius: 12px;
   border: 1px solid #ddd;
+}
+
+/* 📍 BUTTON FIX */
+.loc-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #0f172a;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
 }
 
 /* VEHICLE */
@@ -92,11 +97,6 @@ input {
   border-radius: 12px;
   border: 2px solid #ddd;
   cursor: pointer;
-  transition: 0.3s;
-}
-
-.vehicle:hover {
-  transform: scale(1.05);
 }
 
 .vehicle.active {
@@ -108,12 +108,10 @@ input {
 .book-btn {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(to right, #22c55e, #16a34a);
+  background: green;
   color: white;
   border: none;
   border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
   margin-top: 10px;
 }
 
@@ -122,44 +120,18 @@ input {
   height: 300px;
   margin: 20px;
   border-radius: 15px;
-  overflow: hidden;
 }
 
-/* 📱 BOTTOM SHEET */
+/* BOTTOM */
 .bottom-sheet {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
   background: white;
   color: black;
-  border-radius: 20px 20px 0 0;
   padding: 15px;
-  box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
 }
 
-/* PRICE */
 .price {
-  font-size: 20px;
   font-weight: bold;
   color: green;
-}
-
-/* ANIMATION */
-@keyframes fadeIn {
-  from {opacity:0; transform: translateY(10px);}
-  to {opacity:1; transform: translateY(0);}
-}
-  .loc-btn {
-  position: absolute;
-  right: 8px;
-  top: 8px;
-  background: #0f172a;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 6px 8px;
-  cursor: pointer;
-  font-size: 14px;
 }
 </style>
 </head>
@@ -171,7 +143,7 @@ input {
     <img src="logo.png">
     <span>PahadiGaadi</span>
   </div>
-  <div class="toggle" onclick="toggleMode()">🌙</div>
+  <div onclick="toggleMode()">🌙</div>
 </header>
 
 <div class="hero">
@@ -180,7 +152,8 @@ input {
 
 <div class="container">
 
-  <div style="position: relative;">
+  <!-- FIXED INPUT -->
+  <div class="input-box">
     <input type="text" id="pickup" placeholder="📍 Pickup Location" oninput="showRoute()">
     <button onclick="getLocation()" class="loc-btn">📍</button>
   </div>
@@ -198,7 +171,6 @@ input {
 
 <div id="map"></div>
 
-<!-- 📱 BOTTOM -->
 <div class="bottom-sheet">
   Distance: <span id="distance">0</span> km <br>
   Fare: ₹<span id="price" class="price">0</span>
@@ -206,14 +178,12 @@ input {
 
 <script>
 let selectedVehicle = "";
-let map, marker, geocoder, directionsService, directionsRenderer;
+let map, marker, directionsService, directionsRenderer;
 
-// 🌙 DARK MODE
 function toggleMode() {
   document.body.classList.toggle("dark");
 }
 
-// MAP
 function initMap() {
   const defaultLocation = { lat: 28.6139, lng: 77.2090 };
 
@@ -225,16 +195,24 @@ function initMap() {
   marker = new google.maps.Marker({
     position: defaultLocation,
     map: map,
-    draggable: true,
   });
 
-  geocoder = new google.maps.Geocoder();
   directionsService = new google.maps.DirectionsService();
   directionsRenderer = new google.maps.DirectionsRenderer();
   directionsRenderer.setMap(map);
 }
 
-// VEHICLE
+function getLocation() {
+  navigator.geolocation.getCurrentPosition((pos) => {
+    const loc = {
+      lat: pos.coords.latitude,
+      lng: pos.coords.longitude,
+    };
+    map.setCenter(loc);
+    marker.setPosition(loc);
+  });
+}
+
 function selectVehicle(el, v) {
   document.querySelectorAll('.vehicle').forEach(x => x.classList.remove('active'));
   el.classList.add('active');
@@ -242,41 +220,35 @@ function selectVehicle(el, v) {
   showRoute();
 }
 
-// ROUTE + PRICE
 function showRoute() {
   let pickup = document.getElementById("pickup").value;
   let drop = document.getElementById("drop").value;
 
   if (!pickup || !drop) return;
 
-  const request = {
+  directionsService.route({
     origin: pickup,
     destination: drop,
     travelMode: 'DRIVING',
-  };
+  }, function(result, status) {
 
-  directionsService.route(request, function(result, status) {
     if (status === "OK") {
-
       directionsRenderer.setDirections(result);
 
-      let distanceInMeters = result.routes[0].legs[0].distance.value;
-      let distanceInKm = (distanceInMeters / 1000).toFixed(2);
+      let km = (result.routes[0].legs[0].distance.value / 1000).toFixed(2);
 
-      let rate = 0;
-      if (selectedVehicle === "Bike") rate = 3.5;
-      else if (selectedVehicle === "Car") rate = 5;
-      else if (selectedVehicle === "SUV") rate = 8;
+      let rate = selectedVehicle === "Bike" ? 3.5 :
+                 selectedVehicle === "Car" ? 5 :
+                 selectedVehicle === "SUV" ? 8 : 0;
 
-      let price = distanceInKm * rate;
+      let price = km * rate;
 
-      document.getElementById("distance").innerText = distanceInKm;
+      document.getElementById("distance").innerText = km;
       document.getElementById("price").innerText = Math.round(price);
     }
   });
 }
 
-// BOOK
 function bookRide() {
   let pickup = document.getElementById("pickup").value;
   let drop = document.getElementById("drop").value;
