@@ -112,8 +112,8 @@ input {
 
 <script>
 let selectedVehicle = "";
-let map, marker, geocoder;
-
+  let map, marker, geocoder, directionsService, directionsRenderer;
+  
 // 🚀 INIT MAP
 function initMap() {
   const defaultLocation = { lat: 28.6139, lng: 77.2090 };
@@ -130,7 +130,10 @@ function initMap() {
   });
 
   geocoder = new google.maps.Geocoder();
+directionsService = new google.maps.DirectionsService();
+directionsRenderer = new google.maps.DirectionsRenderer();
 
+directionsRenderer.setMap(map);
   marker.addListener("dragend", function () {
     const position = marker.getPosition();
 
@@ -173,9 +176,27 @@ function selectVehicle(el, v) {
   el.classList.add('active');
   selectedVehicle = v;
 }
+function showRoute() {
+  let pickup = document.getElementById("pickup").value;
+  let drop = document.getElementById("drop").value;
 
+  if (!pickup || !drop) return;
+
+  const request = {
+    origin: pickup,
+    destination: drop,
+    travelMode: 'DRIVING',
+  };
+
+  directionsService.route(request, function(result, status) {
+    if (status === 'OK') {
+      directionsRenderer.setDirections(result);
+    }
+  });
+}
 // 📲 BOOK
 function bookRide() {
+  showRoute();
   let pickup = document.getElementById("pickup").value;
   let drop = document.getElementById("drop").value;
 
