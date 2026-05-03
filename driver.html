@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PahadiGaadi Driver</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to right, #0f172a, #1e293b);
+  color: white;
+}
+
+header {
+  display: flex;
+  justify-content: center;
+  padding: 15px;
+}
+
+.container {
+  background: white;
+  color: black;
+  margin: 20px;
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.card {
+  background: #f1f5f9;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: green;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  margin-top: 10px;
+  font-size: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h2>🚗 Driver Panel</h2>
+</header>
+
+<div class="container">
+  <div id="rides"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAUOnQmWGHbJFl9Yy54tCvwv-wrSfiAvnc",
+  authDomain: "pahadigaadi.firebaseapp.com",
+  projectId: "pahadigaadi",
+  storageBucket: "pahadigaadi.firebasestorage.app",
+  messagingSenderId: "465488936633",
+  appId: "1:465488936633:web:7e5f46325366bf0bf66568"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const ridesDiv = document.getElementById("rides");
+
+// 🔥 LIVE RIDES
+onSnapshot(collection(db, "rides"), (snapshot) => {
+  ridesDiv.innerHTML = "";
+
+  snapshot.forEach((docSnap) => {
+    const data = docSnap.data();
+
+    // 👉 Sirf Pending rides
+    if (data.status !== "Pending") return;
+
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <b>📍 ${data.pickup}</b><br>
+      🏁 ${data.drop}<br>
+      🚗 ${data.vehicle}<br>
+    `;
+
+    const btn = document.createElement("button");
+    btn.innerText = "Accept Ride";
+
+    btn.onclick = async () => {
+      await updateDoc(doc(db, "rides", docSnap.id), {
+        status: "Accepted"
+      });
+
+      alert("Ride Accepted 🚀");
+    };
+
+    card.appendChild(btn);
+    ridesDiv.appendChild(card);
+  });
+});
+</script>
+
+</body>
+</html>
