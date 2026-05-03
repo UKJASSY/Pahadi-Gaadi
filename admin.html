@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PahadiGaadi Admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #0f172a;
+  color: white;
+  margin: 0;
+  padding: 20px;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: white;
+  color: black;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.status {
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  display: inline-block;
+  margin-top: 5px;
+}
+
+.pending { background: orange; }
+.accepted { background: blue; color: white; }
+.done { background: green; color: white; }
+
+button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 8px;
+  margin-right: 5px;
+}
+
+.accept { background: blue; color: white; }
+.complete { background: green; color: white; }
+
+.empty {
+  text-align: center;
+  margin-top: 50px;
+  opacity: 0.7;
+}
+</style>
+</head>
+
+<body>
+
+<h2>🚕 PahadiGaadi Admin Panel</h2>
+
+<div id="ridesContainer"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+import { getFirestore, collection, onSnapshot, doc, updateDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAUOnQmWGHbJFl9Yy54tCvwv-wrSfiAvnc",
+  authDomain: "pahadigaadi.firebaseapp.com",
+  projectId: "pahadigaadi",
+  storageBucket: "pahadigaadi.firebasestorage.app",
+  messagingSenderId: "465488936633",
+  appId: "1:465488936633:web:7e5f46325366bf0bf66568"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const container = document.getElementById("ridesContainer");
+
+// 🔥 REAL-TIME LISTENER
+const q = query(collection(db, "rides"), orderBy("time", "desc"));
+
+onSnapshot(q, (snapshot) => {
+
+  container.innerHTML = "";
+
+  if (snapshot.empty) {
+    container.innerHTML = "<div class='empty'>No bookings yet 😅</div>";
+    return;
+  }
+
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data();
+    const status = (data.status || "pending").toLowerCase();
+
+    const div = document.createElement("div");
+    div.className = "card";
+
+    div.innerHTML = `
+      <b>${data.name}</b> (${data.phone})<br>
+      📍 ${data.pickup}<br>
+      🏁 ${data.drop}<br>
+      🚗 ${data.vehicle}<br>
+
+      <span class="status ${status}">
+        ${data.status || "Pending"}
+      </span><br>
+
+      <button class="accept" onclick="updateStatus('${docSnap.id}', 'Accepted')">Accept</button>
+      <button class="complete" onclick="updateStatus('${docSnap.id}', 'Done')">Complete</button>
+    `;
+
+    container.appendChild(div);
+  });
+
+});
+
+// 🔥 UPDATE STATUS
+window.updateStatus = async function(id, status) {
+  try {
+    const ref = doc(db, "rides", id);
+    await updateDoc(ref, { status });
+  } catch (e) {
+    alert("Error updating status 😅");
+  }
+};
+</script>
+
+</body>
+</html>
