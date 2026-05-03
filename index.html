@@ -184,7 +184,7 @@ header {
   Fare: ₹<span id="price" class="price">0</span>
 </div>
 
-<!-- 🔥 STATUS BOX -->
+<!-- STATUS -->
 <div style="text-align:center; margin-top:10px;">
   <b id="statusBox">Status: Not booked</b>
 </div>
@@ -321,8 +321,9 @@ function bookRide() {
     time: new Date().toISOString()
   };
 
-  saveRideToFirebase(rideData);
-  listenRideStatus(phone);
+  saveRideToFirebase(rideData).then((rideId) => {
+    listenRideStatus(rideId);
+  });
 
   let msg = `🚕 PahadiGaadi Booking
 
@@ -337,10 +338,10 @@ function bookRide() {
 }
 </script>
 
-<!-- 🔥 FIREBASE -->
+<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-import { getFirestore, addDoc, collection, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+import { getFirestore, addDoc, collection, onSnapshot, doc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAUOnQmWGHbJFl9Yy54tCvwv-wrSfiAvnc",
@@ -355,23 +356,24 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 window.saveRideToFirebase = async function(data) {
-  await addDoc(collection(db, "rides"), data);
+  const docRef = await addDoc(collection(db, "rides"), data);
+  return docRef.id;
 };
 
-window.listenRideStatus = function(phone) {
-  const q = query(collection(db, "rides"), where("phone", "==", phone));
+window.listenRideStatus = function(rideId) {
+  const ref = doc(db, "rides", rideId);
 
-  onSnapshot(q, (snapshot) => {
-    snapshot.forEach((doc) => {
-      const ride = doc.data();
+  onSnapshot(ref, (docSnap) => {
+    if (docSnap.exists()) {
+      const ride = docSnap.data();
       document.getElementById("statusBox").innerText =
         "Status: " + (ride.status || "Pending");
-    });
+    }
   });
 };
 </script>
 
-<!-- GOOGLE MAP -->
+<!-- MAP -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdQvXgtRqcUX-Vo2ngB_xL2V-cxCydmTI&libraries=places&callback=initMap" async defer></script>
 
 </body>
