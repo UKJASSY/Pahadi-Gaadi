@@ -1,76 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
 <title>PahadiGaadi Admin</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: Arial;
+  margin: 0;
   background: #0f172a;
   color: white;
-  margin: 0;
-  padding: 20px;
 }
 
-h2 {
+header {
+  padding: 15px;
+  background: #020617;
   text-align: center;
-  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.container {
+  padding: 15px;
 }
 
 .card {
   background: white;
   color: black;
   padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  margin-bottom: 10px;
+  border-radius: 10px;
 }
 
-.status {
-  padding: 5px 10px;
-  border-radius: 8px;
-  font-size: 12px;
-  display: inline-block;
-  margin-top: 5px;
-}
-
-.pending { background: orange; }
-.accepted { background: blue; color: white; }
-.done { background: green; color: white; }
-
-button {
-  padding: 6px 10px;
+.btn {
+  padding: 10px;
   border: none;
-  border-radius: 8px;
-  cursor: pointer;
+  border-radius: 6px;
   margin-top: 8px;
-  margin-right: 5px;
+  cursor: pointer;
 }
 
-.accept { background: blue; color: white; }
-.complete { background: green; color: white; }
+.accept {
+  background: green;
+  color: white;
+}
 
-.empty {
-  text-align: center;
-  margin-top: 50px;
-  opacity: 0.7;
+.reject {
+  background: red;
+  color: white;
 }
 </style>
 </head>
 
 <body>
 
-<h2>🚕 PahadiGaadi Admin Panel</h2>
+<header>🚖 PahadiGaadi Admin Panel</header>
 
-<div id="ridesContainer"></div>
+<div class="container" id="rides"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, updateDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAUOnQmWGHbJFl9Yy54tCvwv-wrSfiAvnc",
@@ -84,55 +73,62 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const container = document.getElementById("ridesContainer");
+const ridesDiv = document.getElementById("rides");
 
-// 🔥 REAL-TIME LISTENER
-const q = query(collection(db, "rides"), orderBy("time", "desc"));
+onSnapshot(collection(db, "rides"), (snapshot) => {
+  ridesDiv.innerHTML = "";
 
-onSnapshot(q, (snapshot) => {
-
-  container.innerHTML = "";
-
-  if (snapshot.empty) {
-    container.innerHTML = "<div class='empty'>No bookings yet 😅</div>";
-    return;
-  }
-
-  snapshot.forEach(docSnap => {
+  snapshot.forEach((docSnap) => {
     const data = docSnap.data();
-    const status = (data.status || "pending").toLowerCase();
 
-    const div = document.createElement("div");
-    div.className = "card";
+    const card = document.createElement("div");
+    card.className = "card";
 
-    div.innerHTML = `
-      <b>${data.name}</b> (${data.phone})<br>
+    card.innerHTML = `
+      <b>${data.name}</b><br>
+      📞 ${data.phone}<br><br>
+
       📍 ${data.pickup}<br>
       🏁 ${data.drop}<br>
-      🚗 ${data.vehicle}<br>
+      🚗 ${data.vehicle}<br><br>
 
-      <span class="status ${status}">
-        ${data.status || "Pending"}
-      </span><br>
+      Status: <b>${data.status || "Pending"}</b><br>
 
-      <button class="accept" onclick="updateStatus('${docSnap.id}', 'Accepted')">Accept</button>
-      <button class="complete" onclick="updateStatus('${docSnap.id}', 'Done')">Complete</button>
+      <button class="btn accept">Accept</button>
+      <button class="btn reject">Reject</button>
     `;
 
-    container.appendChild(div);
+    const acceptBtn = card.querySelector(".accept");
+    const rejectBtn = card.querySelector(".reject");
+
+    acceptBtn.onclick = async () => {
+      await updateDoc(doc(db, "rides", docSnap.id), {
+        status: "Accepted"
+      });
+
+      let msg = `🚕 Ride Accepted
+
+Name: ${data.name}
+Phone: ${data.phone}
+
+Pickup: ${data.pickup}
+Drop: ${data.drop}
+Vehicle: ${data.vehicle}`;
+
+      window.open("https://wa.me/91" + data.phone + "?text=" + encodeURIComponent(msg));
+    };
+
+    rejectBtn.onclick = async () => {
+      await updateDoc(doc(db, "rides", docSnap.id), {
+        status: "Rejected"
+      });
+
+      alert("Ride Rejected ❌");
+    };
+
+    ridesDiv.appendChild(card);
   });
-
 });
-
-// 🔥 UPDATE STATUS
-window.updateStatus = async function(id, status) {
-  try {
-    const ref = doc(db, "rides", id);
-    await updateDoc(ref, { status });
-  } catch (e) {
-    alert("Error updating status 😅");
-  }
-};
 </script>
 
 </body>
