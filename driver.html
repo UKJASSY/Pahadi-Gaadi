@@ -68,7 +68,6 @@ import {
   increment
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
-/* 🔥 ONLY FIX: Firebase config add kiya */
 const firebaseConfig = {
   apiKey: "AIzaSyAUOnQmWGHbJFl9Yy54tCvwv-wrSfiAvnc",
   authDomain: "pahadigaadi.firebaseapp.com",
@@ -171,6 +170,26 @@ onSnapshot(q, (snapshot) => {
     ridesDiv.appendChild(card);
   });
 });
+
+
+// 🔴 🔥 LIVE DRIVER LOCATION UPDATE (ADDED)
+navigator.geolocation.watchPosition(async (pos) => {
+
+  const lat = pos.coords.latitude;
+  const lng = pos.coords.longitude;
+
+  await updateDoc(doc(db, "drivers", driverId), {
+    lat: lat,
+    lng: lng,
+    lastUpdated: new Date().toISOString()
+  });
+
+}, (err) => {
+  console.log("Location error:", err);
+}, {
+  enableHighAccuracy: true
+});
+
 </script>
 
 </body>
