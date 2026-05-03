@@ -87,31 +87,35 @@ const db = getFirestore(app);
 
 const ridesDiv = document.getElementById("rides");
 
-// 🔔 SOUND SYSTEM (AUTO ENABLE ON FIRST TOUCH)
+// 🔔 SOUND SYSTEM (IMPROVED)
 let firstLoad = true;
 let soundEnabled = false;
 const audio = new Audio("https://www.soundjay.com/buttons/sounds/beep-01a.mp3");
 
-// 👉 User first interaction (auto unlock sound)
-function enableSoundOnce() {
+// 👉 Unlock sound on ANY interaction (stronger)
+function unlockSound() {
+  audio.muted = true;
   audio.play().then(() => {
-    soundEnabled = true;
-    audio.pause(); // sirf enable ke liye
+    audio.pause();
     audio.currentTime = 0;
+    audio.muted = false;
+    soundEnabled = true;
+    console.log("Sound enabled ✅");
   }).catch(() => {});
 }
 
-document.addEventListener("click", enableSoundOnce, { once: true });
-document.addEventListener("touchstart", enableSoundOnce, { once: true });
+document.body.addEventListener("click", unlockSound, { once: true });
+document.body.addEventListener("touchstart", unlockSound, { once: true });
 
 // 🔥 ONLY PENDING RIDES
 const q = query(collection(db, "rides"), where("status", "==", "Pending"));
 
 onSnapshot(q, (snapshot) => {
 
-  // 🔔 Play sound (auto after first touch)
+  // 🔔 SOUND PLAY
   if (!snapshot.empty && !firstLoad && soundEnabled) {
-    audio.play();
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
   }
   firstLoad = false;
 
