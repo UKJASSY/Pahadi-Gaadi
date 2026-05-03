@@ -13,84 +13,46 @@
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #0f172a, #1e293b);
+  background: linear-gradient(to right, #0f172a, #1e293b);
   color: white;
 }
 
-/* 🔥 HEADER */
 header {
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 20px;
+  padding: 15px;
 }
 
-header img {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  background: white;
-  padding: 4px;
-}
-
-header h2 {
-  margin: 0;
-  font-weight: 600;
-  font-size: 20px;
-}
-
-/* 🔥 CONTAINER */
 .container {
   background: white;
   color: black;
   margin: 20px;
   padding: 20px;
   border-radius: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
-/* 🔥 CARD DESIGN */
 .card {
-  background: #f8fafc;
+  background: #f1f5f9;
   padding: 15px;
-  border-radius: 16px;
-  margin-bottom: 15px;
-  border: 1px solid #e2e8f0;
-  transition: 0.2s;
+  border-radius: 12px;
+  margin-bottom: 12px;
 }
 
-.card:hover {
-  transform: scale(1.02);
+.earning {
+  color: green;
+  font-weight: bold;
+  margin-top: 5px;
 }
 
-/* TEXT */
-.pickup {
-  font-weight: 600;
-  margin-bottom: 5px;
-}
-
-.drop {
-  color: #555;
-  font-size: 14px;
-}
-
-.vehicle {
-  margin-top: 8px;
-  font-size: 14px;
-}
-
-/* BUTTON */
 button {
   width: 100%;
   padding: 12px;
-  background: linear-gradient(45deg, #16a34a, #22c55e);
+  background: green;
   color: white;
   border: none;
-  border-radius: 12px;
-  margin-top: 12px;
+  border-radius: 10px;
+  margin-top: 10px;
   font-size: 15px;
-  font-weight: 500;
 }
 </style>
 </head>
@@ -98,8 +60,7 @@ button {
 <body>
 
 <header>
-  <img src="logo.png">
-  <h2>PahadiGaadi Driver</h2>
+  <h2>🚗 PahadiGaadi Driver</h2>
 </header>
 
 <div class="container">
@@ -132,34 +93,10 @@ const db = getFirestore(app);
 
 const ridesDiv = document.getElementById("rides");
 
-/* 🔔 SOUND SYSTEM */
-let firstLoad = true;
-let soundEnabled = false;
-const audio = new Audio("https://www.soundjay.com/buttons/sounds/beep-01a.mp3");
-
-function unlockSound() {
-  audio.muted = true;
-  audio.play().then(() => {
-    audio.pause();
-    audio.currentTime = 0;
-    audio.muted = false;
-    soundEnabled = true;
-  }).catch(() => {});
-}
-
-document.body.addEventListener("click", unlockSound, { once: true });
-document.body.addEventListener("touchstart", unlockSound, { once: true });
-
+// 🔥 ONLY PENDING RIDES
 const q = query(collection(db, "rides"), where("status", "==", "Pending"));
 
 onSnapshot(q, (snapshot) => {
-
-  if (!snapshot.empty && !firstLoad && soundEnabled) {
-    audio.currentTime = 0;
-    audio.play().catch(() => {});
-  }
-  firstLoad = false;
-
   ridesDiv.innerHTML = "";
 
   if (snapshot.empty) {
@@ -170,13 +107,25 @@ onSnapshot(q, (snapshot) => {
   snapshot.forEach((docSnap) => {
     const data = docSnap.data();
 
+    // 🔥 REAL KM
+    let km = data.distance || 0;
+
+    // 💰 DRIVER EARNING LOGIC
+    let rate = data.vehicle === "Bike" ? 3 :
+               data.vehicle === "Car" ? 4 :
+               data.vehicle === "SUV" ? 6.5 : 0;
+
+    let earning = (km * rate).toFixed(2);
+
     const card = document.createElement("div");
     card.className = "card";
 
     card.innerHTML = `
-      <div class="pickup">📍 ${data.pickup}</div>
-      <div class="drop">🏁 ${data.drop}</div>
-      <div class="vehicle">🚗 ${data.vehicle}</div>
+      <b>📍 ${data.pickup}</b><br>
+      🏁 ${data.drop}<br>
+      🚗 ${data.vehicle}<br>
+      📏 Distance: ${km} km<br>
+      <div class="earning">💰 Earning: ₹${earning}</div>
     `;
 
     const btn = document.createElement("button");
@@ -186,6 +135,7 @@ onSnapshot(q, (snapshot) => {
       await updateDoc(doc(db, "rides", docSnap.id), {
         status: "Accepted"
       });
+
       alert("Ride Accepted 🚀");
     };
 
