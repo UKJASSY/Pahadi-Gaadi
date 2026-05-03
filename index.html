@@ -62,7 +62,6 @@ header {
 }
 
 .loc-btn {
-  display: block;
   position: absolute;
   right: 10px;
   top: 50%;
@@ -184,7 +183,6 @@ header {
   Fare: ₹<span id="price" class="price">0</span>
 </div>
 
-<!-- STATUS -->
 <div style="text-align:center; margin-top:10px;">
   <b id="statusBox">Status: Not booked</b>
 </div>
@@ -311,6 +309,9 @@ function bookRide() {
     return;
   }
 
+  // 🔥 REAL KM SAVE
+  let km = parseFloat(document.getElementById("distance").innerText);
+
   let rideData = {
     name,
     phone,
@@ -318,6 +319,7 @@ function bookRide() {
     drop,
     vehicle: selectedVehicle,
     status: "Pending",
+    distance: km,
     time: new Date().toISOString()
   };
 
@@ -373,7 +375,6 @@ window.listenRideStatus = function(rideId) {
 };
 </script>
 
-<!-- MAP -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdQvXgtRqcUX-Vo2ngB_xL2V-cxCydmTI&libraries=places&callback=initMap" async defer></script>
 
 </body>
