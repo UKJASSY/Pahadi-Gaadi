@@ -128,6 +128,7 @@ header {
 
 <body>
 
+<!-- LOGIN -->
 <div id="loginScreen" style="padding:30px; text-align:center;">
   <h2>PahadiGaadi Login</h2>
 
@@ -142,6 +143,7 @@ header {
   <button class="book-btn" onclick="loginUser()">Continue</button>
 </div>
 
+<!-- MAIN -->
 <div id="rideScreen" style="display:none;">
 
 <header>
@@ -157,13 +159,11 @@ header {
 
 <div class="container">
 
-  <!-- Pickup -->
   <div class="input-box">
     <input type="text" id="pickup" placeholder="📍 Pickup Location">
     <button class="loc-btn" onclick="getLocation()">📍</button>
   </div>
 
-  <!-- Drop -->
   <div class="input-box">
     <input type="text" id="drop" placeholder="🏁 Drop Location">
   </div>
@@ -233,12 +233,8 @@ function initMap() {
   directionsRenderer = new google.maps.DirectionsRenderer();
   directionsRenderer.setMap(map);
 
-  // 🔥 Autocomplete
-  const pickupInput = document.getElementById("pickup");
-  const dropInput = document.getElementById("drop");
-
-  const pickupAuto = new google.maps.places.Autocomplete(pickupInput);
-  const dropAuto = new google.maps.places.Autocomplete(dropInput);
+  const pickupAuto = new google.maps.places.Autocomplete(document.getElementById("pickup"));
+  const dropAuto = new google.maps.places.Autocomplete(document.getElementById("drop"));
 
   pickupAuto.addListener("place_changed", showRoute);
   dropAuto.addListener("place_changed", showRoute);
@@ -310,6 +306,16 @@ function bookRide() {
     return;
   }
 
+  // 🔥 FIREBASE SAVE
+  saveRideToFirebase({
+    name,
+    phone,
+    pickup,
+    drop,
+    vehicle: selectedVehicle,
+    time: new Date().toISOString()
+  });
+
   let msg = `🚕 PahadiGaadi Booking
 
 👤 Name: ${name}
@@ -323,7 +329,34 @@ function bookRide() {
 }
 </script>
 
-<!-- 🔥 IMPORTANT: API KEY YAHAN DAAL -->
+<!-- 🔥 FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+import { getFirestore, addDoc, collection } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAUOnQmWGHbJFl9Yy54tCvwv-wrSfiAvnc",
+  authDomain: "pahadigaadi.firebaseapp.com",
+  projectId: "pahadigaadi",
+  storageBucket: "pahadigaadi.firebasestorage.app",
+  messagingSenderId: "465488936633",
+  appId: "1:465488936633:web:7e5f46325366bf0bf66568"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.saveRideToFirebase = async function(data) {
+  try {
+    await addDoc(collection(db, "rides"), data);
+    console.log("Saved ✅");
+  } catch (e) {
+    console.error("Error ❌", e);
+  }
+};
+</script>
+
+<!-- GOOGLE MAP -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdQvXgtRqcUX-Vo2ngB_xL2V-cxCydmTI&libraries=places&callback=initMap" async defer></script>
 
 </body>
