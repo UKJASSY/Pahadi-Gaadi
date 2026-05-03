@@ -127,7 +127,6 @@ header {
 
 <body>
 
-<!-- LOGIN -->
 <div id="loginScreen" style="padding:30px; text-align:center;">
   <h2>PahadiGaadi Login</h2>
 
@@ -142,7 +141,6 @@ header {
   <button class="book-btn" onclick="loginUser()">Continue</button>
 </div>
 
-<!-- MAIN -->
 <div id="rideScreen" style="display:none;">
 
 <header>
@@ -193,6 +191,10 @@ header {
 let selectedVehicle = "";
 let map, marker, directionsService, directionsRenderer;
 
+// 🔥 ADDED
+let driverMarker;
+let driverDirectionsService, driverDirectionsRenderer;
+
 function loginUser() {
   let name = document.getElementById("loginName").value;
   let phone = document.getElementById("loginPhone").value;
@@ -232,15 +234,35 @@ function initMap() {
     map: map,
   });
 
+  // 🔥 DRIVER MARKER
+  driverMarker = new google.maps.Marker({
+    position: { lat: 0, lng: 0 },
+    map: map,
+    icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
+  });
+
   directionsService = new google.maps.DirectionsService();
   directionsRenderer = new google.maps.DirectionsRenderer();
   directionsRenderer.setMap(map);
+
+  // 🔥 DRIVER ROUTE
+  driverDirectionsService = new google.maps.DirectionsService();
+  driverDirectionsRenderer = new google.maps.DirectionsRenderer({
+    polylineOptions: {
+      strokeColor: "#00ff00",
+      strokeWeight: 5
+    }
+  });
+  driverDirectionsRenderer.setMap(map);
 
   const pickupAuto = new google.maps.places.Autocomplete(document.getElementById("pickup"));
   const dropAuto = new google.maps.places.Autocomplete(document.getElementById("drop"));
 
   pickupAuto.addListener("place_changed", showRoute);
   dropAuto.addListener("place_changed", showRoute);
+
+  // 🔥 START DRIVER TRACKING
+  listenDriverLocation();
 }
 
 function getLocation() {
@@ -309,9 +331,6 @@ function bookRide() {
     return;
   }
 
-  // 🔥 REAL KM SAVE
-  let km = parseFloat(document.getElementById("distance").innerText);
-
   let rideData = {
     name,
     phone,
@@ -319,40 +338,20 @@ function bookRide() {
     drop,
     vehicle: selectedVehicle,
     status: "Pending",
-    distance: km,
     time: new Date().toISOString()
   };
 
   saveRideToFirebase(rideData).then((rideId) => {
     listenRideStatus(rideId);
   });
-
-  let msg = `🚕 PahadiGaadi Booking
-
-👤 Name: ${name}
-📞 Phone: ${phone}
-
-📍 Pickup: ${pickup}
-🏁 Drop: ${drop}
-🚗 Vehicle: ${selectedVehicle}`;
-
-  window.open("https://wa.me/919761857987?text=" + encodeURIComponent(msg));
 }
 </script>
 
-<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
 import { getFirestore, addDoc, collection, onSnapshot, doc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAUOnQmWGHbJFl9Yy54tCvwv-wrSfiAvnc",
-  authDomain: "pahadigaadi.firebaseapp.com",
-  projectId: "pahadigaadi",
-  storageBucket: "pahadigaadi.firebasestorage.app",
-  messagingSenderId: "465488936633",
-  appId: "1:465488936633:web:7e5f46325366bf0bf66568"
-};
+const firebaseConfig = { /* same */ };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -370,6 +369,39 @@ window.listenRideStatus = function(rideId) {
       const ride = docSnap.data();
       document.getElementById("statusBox").innerText =
         "Status: " + (ride.status || "Pending");
+    }
+  });
+};
+
+// 🔥 DRIVER LIVE + ROUTE
+window.listenDriverLocation = function() {
+  const ref = doc(db, "drivers", "driver1");
+
+  onSnapshot(ref, (docSnap) => {
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+
+      const driverPos = {
+        lat: data.lat,
+        lng: data.lng
+      };
+
+      if (window.driverMarker) {
+        window.driverMarker.setPosition(driverPos);
+      }
+
+      const pickup = document.getElementById("pickup").value;
+      if (!pickup) return;
+
+      driverDirectionsService.route({
+        origin: driverPos,
+        destination: pickup,
+        travelMode: "DRIVING"
+      }, function(result, status) {
+        if (status === "OK") {
+          driverDirectionsRenderer.setDirections(result);
+        }
+      });
     }
   });
 };
