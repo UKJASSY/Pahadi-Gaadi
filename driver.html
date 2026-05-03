@@ -93,8 +93,38 @@ const db = getFirestore(app);
 
 const ridesDiv = document.getElementById("rides");
 
-// 🔥 ONLY PENDING RIDES
-const q = query(collection(db, "rides"), where("status", "==", "Pending"));
+// 🔥 DRIVER ID (STATIC FOR NOW)
+const driverId = "driver1";
+
+
+// 🔥 STEP 1: DRIVER LOCATION TRACKING
+function updateDriverLocation() {
+  navigator.geolocation.watchPosition(async (pos) => {
+    const lat = pos.coords.latitude;
+    const lng = pos.coords.longitude;
+
+    await updateDoc(doc(db, "drivers", driverId), {
+      lat,
+      lng,
+      lastUpdated: new Date().toISOString()
+    });
+
+  }, (err) => {
+    console.log("Location error", err);
+  }, {
+    enableHighAccuracy: true
+  });
+}
+
+updateDriverLocation();
+
+
+// 🔥 STEP 2 + 3 + 4: FILTER + AUTO ASSIGN + SHOW DATA
+const q = query(
+  collection(db, "rides"),
+  where("status", "==", "Pending"),
+  where("driverId", "==", driverId)
+);
 
 onSnapshot(q, (snapshot) => {
   ridesDiv.innerHTML = "";
@@ -107,10 +137,8 @@ onSnapshot(q, (snapshot) => {
   snapshot.forEach((docSnap) => {
     const data = docSnap.data();
 
-    // 🔥 REAL KM
     let km = data.distance || 0;
 
-    // 💰 DRIVER EARNING LOGIC
     let rate = data.vehicle === "Bike" ? 3 :
                data.vehicle === "Car" ? 4 :
                data.vehicle === "SUV" ? 6.5 : 0;
