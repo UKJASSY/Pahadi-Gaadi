@@ -58,12 +58,20 @@ button {
 </header>
 
 <div class="container">
-  <div id="rides"></div>
+  <div id="rides">Loading rides...</div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+import { 
+  getFirestore, 
+  collection, 
+  onSnapshot, 
+  doc, 
+  updateDoc,
+  query,
+  where 
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAUOnQmWGHbJFl9Yy54tCvwv-wrSfiAvnc",
@@ -79,15 +87,30 @@ const db = getFirestore(app);
 
 const ridesDiv = document.getElementById("rides");
 
-// 🔥 LIVE RIDES
-onSnapshot(collection(db, "rides"), (snapshot) => {
+// 🔔 SOUND ALERT SETUP
+let firstLoad = true;
+const audio = new Audio("https://www.soundjay.com/buttons/sounds/beep-01a.mp3");
+
+// 🔥 ONLY PENDING RIDES (optimized)
+const q = query(collection(db, "rides"), where("status", "==", "Pending"));
+
+onSnapshot(q, (snapshot) => {
+
+  // 🔔 Play sound only for new rides (not first load)
+  if (!snapshot.empty && !firstLoad) {
+    audio.play();
+  }
+  firstLoad = false;
+
   ridesDiv.innerHTML = "";
+
+  if (snapshot.empty) {
+    ridesDiv.innerHTML = "<p>No new rides 🚫</p>";
+    return;
+  }
 
   snapshot.forEach((docSnap) => {
     const data = docSnap.data();
-
-    // 👉 Sirf Pending rides
-    if (data.status !== "Pending") return;
 
     const card = document.createElement("div");
     card.className = "card";
