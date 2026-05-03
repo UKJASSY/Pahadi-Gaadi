@@ -127,7 +127,6 @@ header {
 
 <body>
 
-<!-- LOGIN -->
 <div id="loginScreen" style="padding:30px; text-align:center;">
   <h2>PahadiGaadi Login</h2>
 
@@ -142,7 +141,6 @@ header {
   <button class="book-btn" onclick="loginUser()">Continue</button>
 </div>
 
-<!-- MAIN -->
 <div id="rideScreen" style="display:none;">
 
 <header>
@@ -183,7 +181,6 @@ header {
   Fare: ₹<span id="price" class="price">0</span>
 </div>
 
-<!-- STATUS -->
 <div style="text-align:center; margin-top:10px;">
   <b id="statusBox">Status: Not booked</b>
 </div>
@@ -193,6 +190,11 @@ header {
 <script>
 let selectedVehicle = "";
 let map, marker, directionsService, directionsRenderer;
+
+// 🔥 ADDED
+let driverMarker;
+let driverDirectionsService;
+let driverDirectionsRenderer;
 
 function loginUser() {
   let name = document.getElementById("loginName").value;
@@ -237,11 +239,62 @@ function initMap() {
   directionsRenderer = new google.maps.DirectionsRenderer();
   directionsRenderer.setMap(map);
 
+  // 🔥 DRIVER ROUTE SYSTEM
+  driverDirectionsService = new google.maps.DirectionsService();
+  driverDirectionsRenderer = new google.maps.DirectionsRenderer({
+    polylineOptions: {
+      strokeColor: "#00ff00",
+      strokeWeight: 5
+    }
+  });
+  driverDirectionsRenderer.setMap(map);
+
   const pickupAuto = new google.maps.places.Autocomplete(document.getElementById("pickup"));
   const dropAuto = new google.maps.places.Autocomplete(document.getElementById("drop"));
 
   pickupAuto.addListener("place_changed", showRoute);
   dropAuto.addListener("place_changed", showRoute);
+
+  // 🔥 START LISTENING DRIVER
+  listenDriverLocation();
+}
+
+function listenDriverLocation() {
+  const ref = doc(db, "drivers", "driver1");
+
+  onSnapshot(ref, (docSnap) => {
+    if (!docSnap.exists()) return;
+
+    const data = docSnap.data();
+
+    const driverPos = {
+      lat: data.lat,
+      lng: data.lng
+    };
+
+    if (!driverMarker) {
+      driverMarker = new google.maps.Marker({
+        position: driverPos,
+        map: map,
+        icon: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+      });
+    } else {
+      driverMarker.setPosition(driverPos);
+    }
+
+    const pickup = document.getElementById("pickup").value;
+    if (!pickup) return;
+
+    driverDirectionsService.route({
+      origin: driverPos,
+      destination: pickup,
+      travelMode: "DRIVING"
+    }, function(result, status) {
+      if (status === "OK") {
+        driverDirectionsRenderer.setDirections(result);
+      }
+    });
+  });
 }
 
 function getLocation() {
@@ -320,28 +373,16 @@ function bookRide() {
     vehicle: selectedVehicle,
     distance: km,
     status: "Pending",
-    driverId: "driver1", // ✅ FIX
+    driverId: "driver1",
     time: new Date().toISOString()
   };
 
   saveRideToFirebase(rideData).then((rideId) => {
     listenRideStatus(rideId);
   });
-
-  let msg = `🚕 PahadiGaadi Booking
-
-👤 Name: ${name}
-📞 Phone: ${phone}
-
-📍 Pickup: ${pickup}
-🏁 Drop: ${drop}
-🚗 Vehicle: ${selectedVehicle}`;
-
-  window.open("https://wa.me/919761857987?text=" + encodeURIComponent(msg));
 }
 </script>
 
-<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
 import { getFirestore, addDoc, collection, onSnapshot, doc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
