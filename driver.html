@@ -5,22 +5,12 @@
 <title>PahadiGaadi Driver</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
 <style>
-* { box-sizing: border-box; }
-
 body {
   margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(to right, #0f172a, #1e293b);
+  font-family: Arial;
+  background: #0f172a;
   color: white;
-}
-
-header {
-  display: flex;
-  justify-content: center;
-  padding: 15px;
 }
 
 .container {
@@ -38,136 +28,140 @@ header {
   margin-bottom: 12px;
 }
 
+button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: none;
+  border-radius: 8px;
+  color: white;
+}
+
+.accept { background: green; }
+.start { background: orange; }
+.end { background: red; }
+
 .earning {
   color: green;
   font-weight: bold;
-  margin-top: 5px;
-}
-
-button {
-  width: 100%;
-  padding: 12px;
-  background: green;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  margin-top: 10px;
-  font-size: 15px;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-  <h2>🚗 PahadiGaadi Driver</h2>
-</header>
-
 <div class="container">
-  <div id="rides">Loading rides...</div>
+  <h2>🚗 PahadiGaadi Driver</h2>
+  <div id="rides"></div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-import { 
-  getFirestore, 
-  collection, 
-  onSnapshot, 
-  doc, 
+import {
+  getFirestore,
+  collection,
+  onSnapshot,
+  doc,
   updateDoc,
   query,
-  where 
+  where,
+  increment
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAUOnQmWGHbJFl9Yy54tCvwv-wrSfiAvnc",
-  authDomain: "pahadigaadi.firebaseapp.com",
-  projectId: "pahadigaadi",
-  storageBucket: "pahadigaadi.firebasestorage.app",
-  messagingSenderId: "465488936633",
-  appId: "1:465488936633:web:7e5f46325366bf0bf66568"
-};
+const firebaseConfig = { /* same */ };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const ridesDiv = document.getElementById("rides");
-
-// 🔥 DRIVER ID (STATIC FOR NOW)
 const driverId = "driver1";
 
-
-// 🔥 STEP 1: DRIVER LOCATION TRACKING
-function updateDriverLocation() {
-  navigator.geolocation.watchPosition(async (pos) => {
-    const lat = pos.coords.latitude;
-    const lng = pos.coords.longitude;
-
-    await updateDoc(doc(db, "drivers", driverId), {
-      lat,
-      lng,
-      lastUpdated: new Date().toISOString()
-    });
-
-  }, (err) => {
-    console.log("Location error", err);
-  }, {
-    enableHighAccuracy: true
-  });
-}
-
-updateDriverLocation();
-
-
-// 🔥 STEP 2 + 3 + 4: FILTER + AUTO ASSIGN + SHOW DATA
+// 🔥 ONLY MY RIDES
 const q = query(
   collection(db, "rides"),
-  where("status", "==", "Pending"),
   where("driverId", "==", driverId)
 );
 
 onSnapshot(q, (snapshot) => {
   ridesDiv.innerHTML = "";
 
-  if (snapshot.empty) {
-    ridesDiv.innerHTML = "<p>No new rides 🚫</p>";
-    return;
-  }
-
   snapshot.forEach((docSnap) => {
     const data = docSnap.data();
-
-    let km = data.distance || 0;
-
-    let rate = data.vehicle === "Bike" ? 3 :
-               data.vehicle === "Car" ? 4 :
-               data.vehicle === "SUV" ? 6.5 : 0;
-
-    let earning = (km * rate).toFixed(2);
 
     const card = document.createElement("div");
     card.className = "card";
 
     card.innerHTML = `
-      <b>📍 ${data.pickup}</b><br>
-      🏁 ${data.drop}<br>
-      🚗 ${data.vehicle}<br>
-      📏 Distance: ${km} km<br>
-      <div class="earning">💰 Earning: ₹${earning}</div>
+      📍 ${data.pickup || "-"} <br>
+      🏁 ${data.drop || "-"} <br>
+      🚗 ${data.vehicle || "-"} <br>
+      📏 Distance: ${data.distance || 0} km <br>
+      <b>Status: ${data.status}</b>
+      ${data.earning ? `<div class="earning">💰 ₹${data.earning}</div>` : ""}
     `;
 
-    const btn = document.createElement("button");
-    btn.innerText = "Accept Ride";
+    // ACCEPT
+    if (data.status === "Pending") {
+      const btn = document.createElement("button");
+      btn.className = "accept";
+      btn.innerText = "Accept Ride";
 
-    btn.onclick = async () => {
-      await updateDoc(doc(db, "rides", docSnap.id), {
-        status: "Accepted"
-      });
+      btn.onclick = async () => {
+        await updateDoc(doc(db, "rides", docSnap.id), {
+          status: "Accepted"
+        });
+      };
 
-      alert("Ride Accepted 🚀");
-    };
+      card.appendChild(btn);
+    }
 
-    card.appendChild(btn);
+    // START
+    if (data.status === "Accepted") {
+      const btn = document.createElement("button");
+      btn.className = "start";
+      btn.innerText = "Start Ride";
+
+      btn.onclick = async () => {
+        await updateDoc(doc(db, "rides", docSnap.id), {
+          status: "Started"
+        });
+      };
+
+      card.appendChild(btn);
+    }
+
+    // END + EARNING
+    if (data.status === "Started") {
+      const btn = document.createElement("button");
+      btn.className = "end";
+      btn.innerText = "End Ride";
+
+      btn.onclick = async () => {
+
+        let km = data.distance || 0;
+
+        let rate =
+          data.vehicle === "Bike" ? 3 :
+          data.vehicle === "Car" ? 4 :
+          data.vehicle === "SUV" ? 6.5 : 0;
+
+        let earning = km * rate;
+
+        // 🔥 ride update
+        await updateDoc(doc(db, "rides", docSnap.id), {
+          status: "Completed",
+          earning: earning
+        });
+
+        // 🔥 driver earning update
+        await updateDoc(doc(db, "drivers", driverId), {
+          totalEarning: increment(earning)
+        });
+      };
+
+      card.appendChild(btn);
+    }
+
     ridesDiv.appendChild(card);
   });
 });
