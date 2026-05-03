@@ -184,6 +184,11 @@ header {
   Fare: ₹<span id="price" class="price">0</span>
 </div>
 
+<!-- 🔥 STATUS BOX -->
+<div style="text-align:center; margin-top:10px;">
+  <b id="statusBox">Status: Not booked</b>
+</div>
+
 </div>
 
 <script>
@@ -306,15 +311,18 @@ function bookRide() {
     return;
   }
 
-  // 🔥 FIREBASE SAVE
-  saveRideToFirebase({
+  let rideData = {
     name,
     phone,
     pickup,
     drop,
     vehicle: selectedVehicle,
+    status: "Pending",
     time: new Date().toISOString()
-  });
+  };
+
+  saveRideToFirebase(rideData);
+  listenRideStatus(phone);
 
   let msg = `🚕 PahadiGaadi Booking
 
@@ -332,7 +340,7 @@ function bookRide() {
 <!-- 🔥 FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-import { getFirestore, addDoc, collection } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+import { getFirestore, addDoc, collection, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAUOnQmWGHbJFl9Yy54tCvwv-wrSfiAvnc",
@@ -347,12 +355,19 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 window.saveRideToFirebase = async function(data) {
-  try {
-    await addDoc(collection(db, "rides"), data);
-    console.log("Saved ✅");
-  } catch (e) {
-    console.error("Error ❌", e);
-  }
+  await addDoc(collection(db, "rides"), data);
+};
+
+window.listenRideStatus = function(phone) {
+  const q = query(collection(db, "rides"), where("phone", "==", phone));
+
+  onSnapshot(q, (snapshot) => {
+    snapshot.forEach((doc) => {
+      const ride = doc.data();
+      document.getElementById("statusBox").innerText =
+        "Status: " + (ride.status || "Pending");
+    });
+  });
 };
 </script>
 
