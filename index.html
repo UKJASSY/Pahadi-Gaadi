@@ -38,10 +38,7 @@ header {
   padding: 4px;
 }
 
-.hero {
-  text-align: center;
-  padding: 10px;
-}
+.hero { text-align: center; padding: 10px; }
 
 .container {
   background: white;
@@ -58,16 +55,16 @@ header {
 
 .input-box input {
   width: 100%;
-  padding: 14px 14px 14px 40px;
+  padding: 14px 40px 14px 14px;
   border-radius: 25px;
   border: 1px solid #ddd;
   font-size: 14px;
 }
 
 .loc-btn {
-  display:block;
+  display: block;
   position: absolute;
-  right: 12px;
+  right: 10px;
   top: 50%;
   transform: translateY(-50%);
   background: #0f172a;
@@ -160,12 +157,15 @@ header {
 
 <div class="container">
 
+  <!-- Pickup -->
   <div class="input-box">
-    <input type="text" id="pickup" placeholder="📍 Pickup Location" oninput="showRoute()">
+    <input type="text" id="pickup" placeholder="📍 Pickup Location">
+    <button class="loc-btn" onclick="getLocation()">📍</button>
   </div>
 
+  <!-- Drop -->
   <div class="input-box">
-    <input type="text" id="drop" placeholder="🏁 Drop Location" oninput="showRoute()">
+    <input type="text" id="drop" placeholder="🏁 Drop Location">
   </div>
 
   <div class="vehicle-box">
@@ -175,7 +175,6 @@ header {
   </div>
 
   <button class="book-btn" onclick="bookRide()">Book Ride</button>
-
 </div>
 
 <div id="map"></div>
@@ -233,6 +232,35 @@ function initMap() {
   directionsService = new google.maps.DirectionsService();
   directionsRenderer = new google.maps.DirectionsRenderer();
   directionsRenderer.setMap(map);
+
+  // 🔥 Autocomplete
+  const pickupInput = document.getElementById("pickup");
+  const dropInput = document.getElementById("drop");
+
+  const pickupAuto = new google.maps.places.Autocomplete(pickupInput);
+  const dropAuto = new google.maps.places.Autocomplete(dropInput);
+
+  pickupAuto.addListener("place_changed", showRoute);
+  dropAuto.addListener("place_changed", showRoute);
+}
+
+function getLocation() {
+  navigator.geolocation.getCurrentPosition((pos) => {
+    const latlng = {
+      lat: pos.coords.latitude,
+      lng: pos.coords.longitude,
+    };
+
+    const geocoder = new google.maps.Geocoder();
+
+    geocoder.geocode({ location: latlng }, (results, status) => {
+      if (status === "OK") {
+        document.getElementById("pickup").value = results[0].formatted_address;
+        map.setCenter(latlng);
+        marker.setPosition(latlng);
+      }
+    });
+  });
 }
 
 function selectVehicle(el, v) {
@@ -295,7 +323,8 @@ function bookRide() {
 }
 </script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdQvXgtRqcUX-Vo2ngB_xL2V-cxCydmTI&callback=initMap" async defer></script>
+<!-- 🔥 IMPORTANT: API KEY YAHAN DAAL -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdQvXgtRqcUX-Vo2ngB_xL2V-cxCydmTI&libraries=places&callback=initMap" async defer></script>
 
 </body>
 </html>
