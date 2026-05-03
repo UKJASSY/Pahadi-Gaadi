@@ -68,7 +68,15 @@ import {
   increment
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
-const firebaseConfig = { /* same */ };
+/* 🔥 ONLY FIX: Firebase config add kiya */
+const firebaseConfig = {
+  apiKey: "AIzaSyAUOnQmWGHbJFl9Yy54tCvwv-wrSfiAvnc",
+  authDomain: "pahadigaadi.firebaseapp.com",
+  projectId: "pahadigaadi",
+  storageBucket: "pahadigaadi.firebasestorage.app",
+  messagingSenderId: "465488936633",
+  appId: "1:465488936633:web:7e5f46325366bf0bf66568"
+};
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -147,13 +155,11 @@ onSnapshot(q, (snapshot) => {
 
         let earning = km * rate;
 
-        // 🔥 ride update
         await updateDoc(doc(db, "rides", docSnap.id), {
           status: "Completed",
           earning: earning
         });
 
-        // 🔥 driver earning update
         await updateDoc(doc(db, "drivers", driverId), {
           totalEarning: increment(earning)
         });
