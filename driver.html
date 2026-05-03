@@ -58,10 +58,6 @@ button {
 </header>
 
 <div class="container">
-
-  <!-- 🔔 Enable Sound Button -->
-  <button onclick="enableSound()">🔔 Enable Alert Sound</button>
-
   <div id="rides">Loading rides...</div>
 </div>
 
@@ -91,27 +87,29 @@ const db = getFirestore(app);
 
 const ridesDiv = document.getElementById("rides");
 
-// 🔔 SOUND FIX
+// 🔔 SOUND SYSTEM (AUTO ENABLE ON FIRST TOUCH)
 let firstLoad = true;
 let soundEnabled = false;
 const audio = new Audio("https://www.soundjay.com/buttons/sounds/beep-01a.mp3");
 
-// 🔔 Enable sound manually
-window.enableSound = function() {
+// 👉 User first interaction (auto unlock sound)
+function enableSoundOnce() {
   audio.play().then(() => {
     soundEnabled = true;
-    alert("Sound Enabled 🔔");
-  }).catch(() => {
-    alert("Tap again to enable sound");
-  });
-};
+    audio.pause(); // sirf enable ke liye
+    audio.currentTime = 0;
+  }).catch(() => {});
+}
+
+document.addEventListener("click", enableSoundOnce, { once: true });
+document.addEventListener("touchstart", enableSoundOnce, { once: true });
 
 // 🔥 ONLY PENDING RIDES
 const q = query(collection(db, "rides"), where("status", "==", "Pending"));
 
 onSnapshot(q, (snapshot) => {
 
-  // 🔔 Play sound only when enabled + not first load
+  // 🔔 Play sound (auto after first touch)
   if (!snapshot.empty && !firstLoad && soundEnabled) {
     audio.play();
   }
