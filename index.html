@@ -129,15 +129,12 @@ header {
 
 <div id="loginScreen" style="padding:30px; text-align:center;">
   <h2>PahadiGaadi Login</h2>
-
   <div class="input-box">
     <input type="text" id="loginName" placeholder="👤 Your Name">
   </div>
-
   <div class="input-box">
     <input type="tel" id="loginPhone" placeholder="📞 Phone Number">
   </div>
-
   <button class="book-btn" onclick="loginUser()">Continue</button>
 </div>
 
@@ -178,7 +175,8 @@ header {
 
 <div class="bottom-sheet">
   Distance: <span id="distance">0</span> km <br>
-  Fare: ₹<span id="price" class="price">0</span>
+  Fare: ₹<span id="price" class="price">0</span> <br>
+  ETA: <span id="eta">--</span> min
 </div>
 
 <div style="text-align:center; margin-top:10px;">
@@ -190,8 +188,6 @@ header {
 <script>
 let selectedVehicle = "";
 let map, marker, directionsService, directionsRenderer;
-
-// 🔥 ADDED
 let driverMarker;
 let driverDirectionsService, driverDirectionsRenderer;
 
@@ -234,7 +230,6 @@ function initMap() {
     map: map,
   });
 
-  // 🔥 DRIVER MARKER
   driverMarker = new google.maps.Marker({
     position: { lat: 0, lng: 0 },
     map: map,
@@ -245,79 +240,19 @@ function initMap() {
   directionsRenderer = new google.maps.DirectionsRenderer();
   directionsRenderer.setMap(map);
 
-  // 🔥 DRIVER ROUTE
   driverDirectionsService = new google.maps.DirectionsService();
   driverDirectionsRenderer = new google.maps.DirectionsRenderer({
-    polylineOptions: {
-      strokeColor: "#00ff00",
-      strokeWeight: 5
-    }
+    polylineOptions: { strokeColor: "#00ff00", strokeWeight: 5 }
   });
   driverDirectionsRenderer.setMap(map);
 
-  const pickupAuto = new google.maps.places.Autocomplete(document.getElementById("pickup"));
-  const dropAuto = new google.maps.places.Autocomplete(document.getElementById("drop"));
-
-  pickupAuto.addListener("place_changed", showRoute);
-  dropAuto.addListener("place_changed", showRoute);
-
-  // 🔥 START DRIVER TRACKING
   listenDriverLocation();
-}
-
-function getLocation() {
-  navigator.geolocation.getCurrentPosition((pos) => {
-    const latlng = {
-      lat: pos.coords.latitude,
-      lng: pos.coords.longitude,
-    };
-
-    const geocoder = new google.maps.Geocoder();
-
-    geocoder.geocode({ location: latlng }, (results, status) => {
-      if (status === "OK") {
-        document.getElementById("pickup").value = results[0].formatted_address;
-        map.setCenter(latlng);
-        marker.setPosition(latlng);
-      }
-    });
-  });
 }
 
 function selectVehicle(el, v) {
   document.querySelectorAll('.vehicle').forEach(x => x.classList.remove('active'));
   el.classList.add('active');
   selectedVehicle = v;
-  showRoute();
-}
-
-function showRoute() {
-  let pickup = document.getElementById("pickup").value;
-  let drop = document.getElementById("drop").value;
-
-  if (!pickup || !drop) return;
-
-  directionsService.route({
-    origin: pickup,
-    destination: drop,
-    travelMode: 'DRIVING',
-  }, function(result, status) {
-
-    if (status === "OK") {
-      directionsRenderer.setDirections(result);
-
-      let km = (result.routes[0].legs[0].distance.value / 1000).toFixed(2);
-
-      let rate = selectedVehicle === "Bike" ? 3.5 :
-                 selectedVehicle === "Car" ? 5 :
-                 selectedVehicle === "SUV" ? 8 : 0;
-
-      let price = km * rate;
-
-      document.getElementById("distance").innerText = km;
-      document.getElementById("price").innerText = Math.round(price);
-    }
-  });
 }
 
 function bookRide() {
@@ -327,9 +262,11 @@ function bookRide() {
   let drop = document.getElementById("drop").value;
 
   if (!pickup || !drop || !selectedVehicle) {
-    alert("Bhai sab fill kar 😅");
+    alert("Fill all fields");
     return;
   }
+
+  let km = parseFloat(document.getElementById("distance").innerText) || 0;
 
   let rideData = {
     name,
@@ -337,7 +274,9 @@ function bookRide() {
     pickup,
     drop,
     vehicle: selectedVehicle,
+    distance: km,
     status: "Pending",
+    driverId: "driver1",
     time: new Date().toISOString()
   };
 
@@ -352,62 +291,56 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/fireba
 import { getFirestore, addDoc, collection, onSnapshot, doc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 const firebaseConfig = { /* same */ };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 window.saveRideToFirebase = async function(data) {
-  const docRef = await addDoc(collection(db, "rides"), data);
-  return docRef.id;
+  const ref = await addDoc(collection(db, "rides"), data);
+  return ref.id;
 };
 
-window.listenRideStatus = function(rideId) {
-  const ref = doc(db, "rides", rideId);
+window.listenRideStatus = function(id) {
+  onSnapshot(doc(db, "rides", id), (snap) => {
+    if (snap.exists()) {
+      const data = snap.data();
+      document.getElementById("statusBox").innerText = "Status: " + data.status;
 
-  onSnapshot(ref, (docSnap) => {
-    if (docSnap.exists()) {
-      const ride = docSnap.data();
-      document.getElementById("statusBox").innerText =
-        "Status: " + (ride.status || "Pending");
+      if (data.status === "Completed") {
+        driverDirectionsRenderer.set("directions", null);
+        document.getElementById("eta").innerText = "--";
+      }
     }
   });
 };
 
-// 🔥 DRIVER LIVE + ROUTE
 window.listenDriverLocation = function() {
-  const ref = doc(db, "drivers", "driver1");
+  onSnapshot(doc(db, "drivers", "driver1"), (snap) => {
+    if (!snap.exists()) return;
 
-  onSnapshot(ref, (docSnap) => {
-    if (docSnap.exists()) {
-      const data = docSnap.data();
+    const d = snap.data();
+    const pos = { lat: d.lat, lng: d.lng };
 
-      const driverPos = {
-        lat: data.lat,
-        lng: data.lng
-      };
+    driverMarker.setPosition(pos);
 
-      if (window.driverMarker) {
-        window.driverMarker.setPosition(driverPos);
+    const pickup = document.getElementById("pickup").value;
+    if (!pickup) return;
+
+    driverDirectionsService.route({
+      origin: pos,
+      destination: pickup,
+      travelMode: "DRIVING"
+    }, (res, status) => {
+      if (status === "OK") {
+        driverDirectionsRenderer.setDirections(res);
+        const min = Math.ceil(res.routes[0].legs[0].duration.value / 60);
+        document.getElementById("eta").innerText = min;
       }
-
-      const pickup = document.getElementById("pickup").value;
-      if (!pickup) return;
-
-      driverDirectionsService.route({
-        origin: driverPos,
-        destination: pickup,
-        travelMode: "DRIVING"
-      }, function(result, status) {
-        if (status === "OK") {
-          driverDirectionsRenderer.setDirections(result);
-        }
-      });
-    }
+    });
   });
 };
 </script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdQvXgtRqcUX-Vo2ngB_xL2V-cxCydmTI&libraries=places&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdQvXgtRqcUX-Vo2ngB_xL2V-cxCydmTI&callback=initMap" async defer></script>
 
 </body>
 </html>
