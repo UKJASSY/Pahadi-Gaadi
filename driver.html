@@ -40,6 +40,13 @@ button {
 .accept { background: green; }
 .start { background: orange; }
 .end { background: red; }
+.nav { background: blue; }
+
+#map {
+  height: 250px;
+  margin: 20px;
+  border-radius: 15px;
+}
 
 .earning {
   color: green;
@@ -54,6 +61,9 @@ button {
   <h2>🚗 PahadiGaadi Driver</h2>
   <div id="rides"></div>
 </div>
+
+<!-- 🗺️ MAP -->
+<div id="map"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
@@ -83,6 +93,38 @@ const db = getFirestore(app);
 const ridesDiv = document.getElementById("rides");
 const driverId = "driver1";
 
+// 🗺️ MAP VARS
+let map, directionsService, directionsRenderer;
+
+// INIT MAP
+window.initMap = function () {
+  const defaultLoc = { lat: 28.6139, lng: 77.2090 };
+
+  map = new google.maps.Map(document.getElementById("map"), {
+    zoom: 13,
+    center: defaultLoc
+  });
+
+  directionsService = new google.maps.DirectionsService();
+  directionsRenderer = new google.maps.DirectionsRenderer();
+  directionsRenderer.setMap(map);
+};
+
+// SHOW ROUTE
+function showRoute(pickup, drop) {
+  if (!pickup || !drop) return;
+
+  directionsService.route({
+    origin: pickup,
+    destination: drop,
+    travelMode: "DRIVING"
+  }, (result, status) => {
+    if (status === "OK") {
+      directionsRenderer.setDirections(result);
+    }
+  });
+}
+
 // 🔥 ONLY MY RIDES
 const q = query(
   collection(db, "rides"),
@@ -106,6 +148,21 @@ onSnapshot(q, (snapshot) => {
       <b>Status: ${data.status}</b>
       ${data.earning ? `<div class="earning">💰 ₹${data.earning}</div>` : ""}
     `;
+
+    // 🧭 NAV BUTTON
+    const navBtn = document.createElement("button");
+    navBtn.className = "nav";
+    navBtn.innerText = "Navigate 🚗";
+
+    navBtn.onclick = () => {
+      const url = `https://www.google.com/maps/dir/?api=1&origin=${data.pickup}&destination=${data.drop}&travelmode=driving`;
+      window.open(url, "_blank");
+    };
+
+    card.appendChild(navBtn);
+
+    // 🗺️ SHOW ROUTE ON MAP
+    showRoute(data.pickup, data.drop);
 
     // ACCEPT
     if (data.status === "Pending") {
@@ -137,7 +194,7 @@ onSnapshot(q, (snapshot) => {
       card.appendChild(btn);
     }
 
-    // END + EARNING
+    // END
     if (data.status === "Started") {
       const btn = document.createElement("button");
       btn.className = "end";
@@ -171,26 +228,6 @@ onSnapshot(q, (snapshot) => {
   });
 });
 
-
-// 🔴 🔥 LIVE DRIVER LOCATION UPDATE (ADDED)
+// 📍 LIVE LOCATION
 navigator.geolocation.watchPosition(async (pos) => {
-
-  const lat = pos.coords.latitude;
-  const lng = pos.coords.longitude;
-
-  await updateDoc(doc(db, "drivers", driverId), {
-    lat: lat,
-    lng: lng,
-    lastUpdated: new Date().toISOString()
-  });
-
-}, (err) => {
-  console.log("Location error:", err);
-}, {
-  enableHighAccuracy: true
-});
-
-</script>
-
-</body>
-</html>
+  await updateDoc(doc(db, "drivers
