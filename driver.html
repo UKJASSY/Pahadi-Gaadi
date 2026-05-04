@@ -12,7 +12,6 @@ body {
   background: #0f172a;
   color: white;
 }
-
 .container {
   background: white;
   color: black;
@@ -20,14 +19,12 @@ body {
   padding: 20px;
   border-radius: 20px;
 }
-
 .card {
   background: #f1f5f9;
   padding: 15px;
   border-radius: 12px;
   margin-bottom: 12px;
 }
-
 button {
   width: 100%;
   padding: 10px;
@@ -36,11 +33,9 @@ button {
   border-radius: 8px;
   color: white;
 }
-
 .accept { background: green; }
 .start { background: orange; }
 .end { background: red; }
-
 .earning {
   color: green;
   font-weight: bold;
@@ -65,7 +60,8 @@ import {
   updateDoc,
   query,
   where,
-  increment
+  increment,
+  setDoc
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -83,17 +79,62 @@ const db = getFirestore(app);
 const ridesDiv = document.getElementById("rides");
 const driverId = "driver1";
 
-// 🔥 ONLY MY RIDES
+// 📍 DRIVER LOCATION (GLOBAL)
+let driverLat = 0;
+let driverLng = 0;
+
+// 📏 DISTANCE FUNCTION (HAVERSINE)
+function getDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+
+  const a =
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI/180) *
+    Math.cos(lat2 * Math.PI/180) *
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+
+// 🔥 NEAREST RIDES QUERY (Pending rides)
 const q = query(
   collection(db, "rides"),
-  where("driverId", "==", driverId)
+  where("status", "==", "Pending")
 );
 
 onSnapshot(q, (snapshot) => {
   ridesDiv.innerHTML = "";
 
+  let rides = [];
+
   snapshot.forEach((docSnap) => {
     const data = docSnap.data();
+
+    // ⚠️ Need pickupLat/Lng
+    if (!data.pickupLat || !data.pickupLng) return;
+
+    const dist = getDistance(
+      driverLat,
+      driverLng,
+      data.pickupLat,
+      data.pickupLng
+    );
+
+    rides.push({
+      id: docSnap.id,
+      ...data,
+      distanceFromDriver: dist
+    });
+  });
+
+  // 🔥 sort nearest first
+  rides.sort((a, b) => a.distanceFromDriver - b.distanceFromDriver);
+
+  // 👉 show top 3 nearest rides
+  rides.slice(0, 3).forEach((data) => {
 
     const card = document.createElement("div");
     card.className = "card";
@@ -102,87 +143,58 @@ onSnapshot(q, (snapshot) => {
       📍 ${data.pickup || "-"} <br>
       🏁 ${data.drop || "-"} <br>
       🚗 ${data.vehicle || "-"} <br>
-      📏 Distance: ${data.distance || 0} km <br>
+      📏 Ride Distance: ${data.distance || 0} km <br>
+      📍 Driver se: ${data.distanceFromDriver.toFixed(2)} km <br>
       <b>Status: ${data.status}</b>
-      ${data.earning ? `<div class="earning">💰 ₹${data.earning}</div>` : ""}
     `;
 
     // ACCEPT
-    if (data.status === "Pending") {
-      const btn = document.createElement("button");
-      btn.className = "accept";
-      btn.innerText = "Accept Ride";
+    const btn = document.createElement("button");
+    btn.className = "accept";
+    btn.innerText = "Accept Ride";
 
-      btn.onclick = async () => {
-        await updateDoc(doc(db, "rides", docSnap.id), {
-          status: "Accepted"
-        });
-      };
+    btn.onclick = async () => {
+      await updateDoc(doc(db, "rides", data.id), {
+        status: "Accepted",
+        driverId: driverId
+      });
+    };
 
-      card.appendChild(btn);
-    }
-
-    // START
-    if (data.status === "Accepted") {
-      const btn = document.createElement("button");
-      btn.className = "start";
-      btn.innerText = "Start Ride";
-
-      btn.onclick = async () => {
-        await updateDoc(doc(db, "rides", docSnap.id), {
-          status: "Started"
-        });
-      };
-
-      card.appendChild(btn);
-    }
-
-    // END + EARNING
-    if (data.status === "Started") {
-      const btn = document.createElement("button");
-      btn.className = "end";
-      btn.innerText = "End Ride";
-
-      btn.onclick = async () => {
-
-        let km = data.distance || 0;
-
-        let rate =
-          data.vehicle === "Bike" ? 3 :
-          data.vehicle === "Car" ? 4 :
-          data.vehicle === "SUV" ? 6.5 : 0;
-
-        let earning = km * rate;
-
-        await updateDoc(doc(db, "rides", docSnap.id), {
-          status: "Completed",
-          earning: earning
-        });
-
-        await updateDoc(doc(db, "drivers", driverId), {
-          totalEarning: increment(earning)
-        });
-      };
-
-      card.appendChild(btn);
-    }
-
+    card.appendChild(btn);
     ridesDiv.appendChild(card);
   });
 });
 
+// 📍 DRIVER LIVE LOCATION (FIXED + THROTTLED)
+let lastUpdate = 0;
 
-// 🔴 🔥 LIVE DRIVER LOCATION UPDATE (ADDED)
 navigator.geolocation.watchPosition(async (pos) => {
+
+  const now = Date.now();
+  if (now - lastUpdate < 3000) return;
+  lastUpdate = now;
 
   const lat = pos.coords.latitude;
   const lng = pos.coords.longitude;
 
-  await updateDoc(doc(db, "drivers", driverId), {
-    lat: lat,
-    lng: lng,
-    lastUpdated: new Date().toISOString()
-  });
+  driverLat = lat;
+  driverLng = lng;
+
+  const driverRef = doc(db, "drivers", driverId);
+
+  try {
+    await updateDoc(driverRef, {
+      lat,
+      lng,
+      lastUpdated: new Date().toISOString()
+    });
+  } catch (e) {
+    await setDoc(driverRef, {
+      lat,
+      lng,
+      totalEarning: 0
+    });
+  }
 
 }, (err) => {
   console.log("Location error:", err);
