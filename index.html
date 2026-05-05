@@ -79,6 +79,7 @@ header { text-align:center; padding:20px 10px; overflow:hidden; }
   padding: 14px 40px 14px 14px;
   border-radius: 25px;
   border: 1px solid #ddd;
+  font-size: 14px;
 }
 
 .loc-btn {
@@ -92,6 +93,7 @@ header { text-align:center; padding:20px 10px; overflow:hidden; }
   border-radius: 50%;
   width: 30px;
   height: 30px;
+  cursor: pointer;
 }
 
 .vehicle-box { display: flex; gap: 10px; margin-top: 10px; }
@@ -115,6 +117,7 @@ header { text-align:center; padding:20px 10px; overflow:hidden; }
   border: none;
   border-radius: 12px;
   margin-top: 15px;
+  font-size: 16px;
 }
 
 #map { height: 300px; margin: 20px; border-radius: 15px; }
@@ -219,7 +222,7 @@ function loginUser() {
   document.getElementById("rideScreen").style.display = "block";
 }
 
-/* FIX 1 */
+/* ✅ FIX 1 */
 window.onload = function () {
   let name = localStorage.getItem("userName");
   let phone = localStorage.getItem("userPhone");
@@ -230,8 +233,14 @@ window.onload = function () {
   }
 
   const rideId = localStorage.getItem("currentRideId");
-  if (rideId) {
+
+  const pickup = document.getElementById("pickup").value;
+  const drop = document.getElementById("drop").value;
+
+  if (rideId && pickup && drop) {
     listenRideStatus(rideId);
+  } else {
+    localStorage.removeItem("currentRideId");
   }
 }
 
@@ -252,14 +261,21 @@ function initMap() {
   directionsRenderer = new google.maps.DirectionsRenderer();
   directionsRenderer.setMap(map);
 
+  driverDirectionsService = new google.maps.DirectionsService();
+  driverDirectionsRenderer = new google.maps.DirectionsRenderer({
+    polylineOptions: { strokeColor: "#00ff00", strokeWeight: 5 }
+  });
+  driverDirectionsRenderer.setMap(map);
+
   const pickupAuto = new google.maps.places.Autocomplete(document.getElementById("pickup"));
   const dropAuto = new google.maps.places.Autocomplete(document.getElementById("drop"));
 
   pickupAuto.addListener("place_changed", showRoute);
   dropAuto.addListener("place_changed", showRoute);
+
+  listenDriverLocation();
 }
 
-/* FIX 2 */
 function selectVehicle(el, v) {
   document.querySelectorAll('.vehicle').forEach(x => x.classList.remove('active'));
   el.classList.add('active');
@@ -278,25 +294,72 @@ function showRoute() {
     destination: drop,
     travelMode: 'DRIVING',
   }, function(result, status) {
+
     if (status === "OK") {
       directionsRenderer.setDirections(result);
 
-      let km = (result.routes[0].legs[0].distance.value / 1000).toFixed(2);
+      let leg = result.routes[0].legs[0];
+
+      pickupLat = leg.start_location.lat();
+      pickupLng = leg.start_location.lng();
+
+      let km = (leg.distance.value / 1000).toFixed(2);
+
+      let rate = selectedVehicle === "Bike" ? 3.5 :
+                 selectedVehicle === "Car" ? 5 :
+                 selectedVehicle === "SUV" ? 8 : 0;
+
+      let price = km * rate;
+
       document.getElementById("distance").innerText = km;
+      document.getElementById("price").innerText = Math.round(price);
     }
   });
 }
 
-/* FIX 3 */
+/* ✅ FIX 2 */
 function bookRide() {
-  if (localStorage.getItem("currentRideId")) {
-    alert("Ride already booked");
+
+  let existingRide = localStorage.getItem("currentRideId");
+  if (existingRide) {
+    alert("Ride already booked bhai 😅");
     return;
   }
 
-  localStorage.setItem("currentRideId", "1");
+  let name = localStorage.getItem("userName");
+  let phone = localStorage.getItem("userPhone");
+  let pickup = document.getElementById("pickup").value;
+  let drop = document.getElementById("drop").value;
+
+  if (!pickup || !drop || !selectedVehicle) {
+    alert("Bhai sab fill kar 😅");
+    return;
+  }
+
+  let km = parseFloat(document.getElementById("distance").innerText) || 0;
+
+  let rideData = {
+    name,
+    phone,
+    pickup,
+    drop,
+    vehicle: selectedVehicle,
+    distance: km,
+    status: "Pending",
+    driverId: null,
+    pickupLat: pickupLat,
+    pickupLng: pickupLng,
+    time: new Date().toISOString()
+  };
+
+  saveRideToFirebase(rideData).then((rideId) => {
+    localStorage.setItem("currentRideId", rideId);
+    listenRideStatus(rideId);
+  });
 }
 </script>
+
+<!-- FIREBASE SAME -->
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdQvXgtRqcUX-Vo2ngB_xL2V-cxCydmTI&libraries=places&callback=initMap" async defer></script>
 
