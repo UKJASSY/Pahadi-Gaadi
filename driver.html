@@ -40,27 +40,62 @@ button {
   color: green;
   font-weight: bold;
 }
+
+/* 🔥 HEADER ANIMATION */
+.slide-left {
+  font-size:32px;
+  font-weight:800;
+  letter-spacing:1px;
+  transform: translateX(-100px);
+  opacity: 0;
+  animation: slideLeft 0.8s ease forwards;
+}
+
+.slide-right {
+  font-size:32px;
+  font-weight:800;
+  letter-spacing:1px;
+  transform: translateX(100px);
+  opacity: 0;
+  animation: slideRight 0.8s ease forwards;
+}
+
+.logo-zoom {
+  width:55px;
+  height:55px;
+  border-radius:12px;
+  background:white;
+  padding:5px;
+  transform: scale(0);
+  animation: zoomIn 0.6s ease forwards;
+  animation-delay: 0.3s;
+}
+
+@keyframes slideLeft {
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideRight {
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes zoomIn {
+  to { transform: scale(1); }
+}
 </style>
 </head>
 
 <body>
 
-<!-- 🔥 NEW HEADER (ONLY CHANGE) -->
-<div style="text-align:center; margin-top:25px;">
+<!-- 🔥 ANIMATED HEADER -->
+<div style="text-align:center; margin-top:25px; overflow:hidden;">
 
   <div style="display:flex; align-items:center; justify-content:center; gap:15px;">
-    
-    <span style="font-size:32px; font-weight:800; letter-spacing:1px;">
-      Pahadi
-    </span>
-    
-    <img src="logo.png" 
-         style="width:55px; height:55px; border-radius:12px; background:white; padding:5px;">
-    
-    <span style="font-size:32px; font-weight:800; letter-spacing:1px;">
-      Gaadi
-    </span>
+    <span class="slide-left">Pahadi</span>
 
+    <img src="logo.png" class="logo-zoom">
+
+    <span class="slide-right">Gaadi</span>
   </div>
 
   <div style="margin-top:8px; font-size:20px; font-weight:600; opacity:0.9;">
