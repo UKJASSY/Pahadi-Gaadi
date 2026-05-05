@@ -171,7 +171,8 @@ header {
     <div class="vehicle" onclick="selectVehicle(this,'SUV')">🚙 SUV</div>
   </div>
 
-  <button class="book-btn" onclick="bookRide()">Book Ride</button>
+  <!-- 🔥 FIXED BUTTON -->
+  <button id="bookRideBtn" class="book-btn" onclick="bookRide()">Book Ride</button>
 </div>
 
 <div id="map"></div>
@@ -221,6 +222,12 @@ window.onload = function () {
   if (name && phone) {
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("rideScreen").style.display = "block";
+  }
+
+  // 🔥 restore ride listener
+  const rideId = localStorage.getItem("currentRideId");
+  if (rideId) {
+    listenRideStatus(rideId);
   }
 }
 
@@ -346,6 +353,7 @@ function bookRide() {
   };
 
   saveRideToFirebase(rideData).then((rideId) => {
+    localStorage.setItem("currentRideId", rideId); // 🔥
     listenRideStatus(rideId);
   });
 }
@@ -372,7 +380,7 @@ window.saveRideToFirebase = async function(data) {
   return docRef.id;
 };
 
-// 🔥 UPDATED FUNCTION
+// 🔥 FINAL FUNCTION
 window.listenRideStatus = function(rideId) {
   const ref = doc(db, "rides", rideId);
 
@@ -380,12 +388,14 @@ window.listenRideStatus = function(rideId) {
     if (docSnap.exists()) {
       const ride = docSnap.data();
 
+      let status = (ride.status || "pending").toLowerCase();
+
       document.getElementById("statusBox").innerText =
-        "Status: " + (ride.status || "Pending");
+        "Status: " + status;
 
-      const bookBtn = document.querySelector(".book-btn");
+      const bookBtn = document.getElementById("bookRideBtn");
 
-      if (ride.status === "accepted" || ride.status === "Accepted") {
+      if (status === "accepted") {
         bookBtn.innerText = "Booked";
         bookBtn.disabled = true;
         bookBtn.style.backgroundColor = "gray";
