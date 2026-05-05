@@ -79,11 +79,11 @@ const db = getFirestore(app);
 const ridesDiv = document.getElementById("rides");
 const driverId = "driver1";
 
-// 📍 DRIVER LOCATION (GLOBAL)
+// 📍 DRIVER LOCATION
 let driverLat = 0;
 let driverLng = 0;
 
-// 📏 DISTANCE FUNCTION (HAVERSINE)
+// 📏 DISTANCE FUNCTION
 function getDistance(lat1, lon1, lat2, lon2) {
   const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -99,7 +99,7 @@ function getDistance(lat1, lon1, lat2, lon2) {
   return R * c;
 }
 
-// 🔥 NEAREST RIDES QUERY (Pending rides)
+// 🔥 ONLY PENDING RIDES
 const q = query(
   collection(db, "rides"),
   where("status", "==", "Pending")
@@ -113,7 +113,6 @@ onSnapshot(q, (snapshot) => {
   snapshot.forEach((docSnap) => {
     const data = docSnap.data();
 
-    // ⚠️ Need pickupLat/Lng
     if (!data.pickupLat || !data.pickupLng) return;
 
     const dist = getDistance(
@@ -130,10 +129,8 @@ onSnapshot(q, (snapshot) => {
     });
   });
 
-  // 🔥 sort nearest first
   rides.sort((a, b) => a.distanceFromDriver - b.distanceFromDriver);
 
-  // 👉 show top 3 nearest rides
   rides.slice(0, 3).forEach((data) => {
 
     const card = document.createElement("div");
@@ -148,14 +145,13 @@ onSnapshot(q, (snapshot) => {
       <b>Status: ${data.status}</b>
     `;
 
-    // ACCEPT
     const btn = document.createElement("button");
     btn.className = "accept";
     btn.innerText = "Accept Ride";
 
     btn.onclick = async () => {
       await updateDoc(doc(db, "rides", data.id), {
-        status: "Accepted",
+        status: "accepted",   // ✅ FINAL FIX (lowercase)
         driverId: driverId
       });
     };
@@ -165,7 +161,7 @@ onSnapshot(q, (snapshot) => {
   });
 });
 
-// 📍 DRIVER LIVE LOCATION (FIXED + THROTTLED)
+// 📍 DRIVER LIVE LOCATION
 let lastUpdate = 0;
 
 navigator.geolocation.watchPosition(async (pos) => {
@@ -201,7 +197,6 @@ navigator.geolocation.watchPosition(async (pos) => {
 }, {
   enableHighAccuracy: true
 });
-
 </script>
 
 </body>
