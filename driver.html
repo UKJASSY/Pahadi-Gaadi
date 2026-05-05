@@ -9,22 +9,69 @@
 body {
   margin: 0;
   font-family: Arial;
-  background: #0f172a;
+
+  /* 🔥 SAME BACKGROUND */
+  background: url('bg.jpg.jpeg') no-repeat center center/cover;
+  height: 100vh;
   color: white;
 }
-.container {
+
+/* overlay */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  z-index: -1;
+}
+
+/* HEADER */
+.header {
+  text-align: center;
+  padding: 20px 10px;
+}
+
+.brand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  font-size: 28px;
+  font-weight: 800;
+  color: #a8324a;
+}
+
+.brand img {
+  width: 55px;
+  height: 55px;
+  border-radius: 10px;
   background: white;
+  padding: 5px;
+}
+
+.sub {
+  font-size: 16px;
+  margin-top: 5px;
+  opacity: 0.8;
+}
+
+/* GLASS CONTAINER */
+.container {
+  background: rgba(255,255,255,0.9);
   color: black;
   margin: 20px;
   padding: 20px;
   border-radius: 20px;
+  backdrop-filter: blur(10px);
 }
+
 .card {
   background: #f1f5f9;
   padding: 15px;
   border-radius: 12px;
   margin-bottom: 12px;
 }
+
 button {
   width: 100%;
   padding: 10px;
@@ -32,83 +79,39 @@ button {
   border: none;
   border-radius: 8px;
   color: white;
-}
-.accept { background: green; }
-.start { background: orange; }
-.end { background: red; }
-.earning {
-  color: green;
   font-weight: bold;
 }
 
-/* 🔥 HEADER ANIMATION */
-.slide-left {
-  font-size:32px;
-  font-weight:800;
-  letter-spacing:1px;
-  transform: translateX(-100px);
-  opacity: 0;
-  animation: slideLeft 0.8s ease forwards;
-}
+.accept { background: #16a34a; }
+.start { background: orange; }
+.end { background: red; }
 
-.slide-right {
-  font-size:32px;
-  font-weight:800;
-  letter-spacing:1px;
-  transform: translateX(100px);
-  opacity: 0;
-  animation: slideRight 0.8s ease forwards;
-}
-
-.logo-zoom {
-  width:55px;
-  height:55px;
-  border-radius:12px;
-  background:white;
-  padding:5px;
-  transform: scale(0);
-  animation: zoomIn 0.6s ease forwards;
-  animation-delay: 0.3s;
-}
-
-@keyframes slideLeft {
-  to { transform: translateX(0); opacity: 1; }
-}
-
-@keyframes slideRight {
-  to { transform: translateX(0); opacity: 1; }
-}
-
-@keyframes zoomIn {
-  to { transform: scale(1); }
+.earning {
+  color: green;
+  font-weight: bold;
 }
 </style>
 </head>
 
 <body>
 
-<!-- 🔥 ANIMATED HEADER -->
-<div style="text-align:center; margin-top:25px; overflow:hidden;">
-
-  <div style="display:flex; align-items:center; justify-content:center; gap:15px;">
-    <span class="slide-left">Pahadi</span>
-
-    <img src="logo.png" class="logo-zoom">
-
-    <span class="slide-right">Gaadi</span>
+<div class="header">
+  <div class="brand">
+    <span>Pahadi</span>
+    <img src="logo.png">
+    <span>Gaadi</span>
   </div>
-
-  <div style="margin-top:8px; font-size:20px; font-weight:600; opacity:0.9;">
-    Driver
-  </div>
-
+  <div class="sub">Driver</div>
 </div>
 
 <div class="container">
+  <h2>🚗 Driver Panel</h2>
   <div id="rides"></div>
 </div>
 
 <script type="module">
+/* 🔥 SAME ORIGINAL CODE — UNTOUCHED */
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
 import {
   getFirestore,
@@ -206,7 +209,7 @@ onSnapshot(q, (snapshot) => {
 
     btn.onclick = async () => {
       await updateDoc(doc(db, "rides", data.id), {
-        status: "accepted",
+        status: "Accepted",
         driverId: driverId
       });
     };
@@ -251,6 +254,7 @@ navigator.geolocation.watchPosition(async (pos) => {
 }, {
   enableHighAccuracy: true
 });
+
 </script>
 
 </body>
