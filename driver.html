@@ -151,7 +151,7 @@ onSnapshot(q, (snapshot) => {
 
     btn.onclick = async () => {
       await updateDoc(doc(db, "rides", data.id), {
-        status: "accepted",   // ✅ FINAL FIX (lowercase)
+        status: "accepted",   // ✅ FINAL FIX
         driverId: driverId
       });
     };
