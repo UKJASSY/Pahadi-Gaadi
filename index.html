@@ -67,64 +67,68 @@ header { text-align:center; padding:20px 10px; overflow:hidden; }
 .container {
   background: rgba(255,255,255,0.9);
   backdrop-filter: blur(10px);
-  margin:20px;
-  padding:20px;
-  border-radius:20px;
+  margin: 20px;
+  padding: 20px;
+  border-radius: 20px;
 }
 
-.input-box { position:relative; margin-bottom:12px; }
+.input-box { position: relative; margin-bottom: 12px; }
 
 .input-box input {
-  width:100%;
-  padding:14px 40px 14px 14px;
-  border-radius:25px;
-  border:1px solid #ddd;
+  width: 100%;
+  padding: 14px 40px 14px 14px;
+  border-radius: 25px;
+  border: 1px solid #ddd;
+  font-size: 14px;
 }
 
 .loc-btn {
-  position:absolute;
-  right:10px;
-  top:50%;
-  transform:translateY(-50%);
-  background:#0f172a;
-  color:white;
-  border:none;
-  border-radius:50%;
-  width:30px;
-  height:30px;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #0f172a;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
 }
 
-.vehicle-box { display:flex; gap:10px; }
+.vehicle-box { display: flex; gap: 10px; margin-top: 10px; }
 
 .vehicle {
-  flex:1;
-  padding:12px;
-  text-align:center;
-  border-radius:12px;
-  border:2px solid #ddd;
+  flex: 1;
+  padding: 12px;
+  text-align: center;
+  border-radius: 12px;
+  border: 2px solid #ddd;
+  cursor: pointer;
 }
 
-.vehicle.active { background:#0f172a; color:white; }
+.vehicle.active { background: #0f172a; color: white; }
 
 .book-btn {
-  width:100%;
-  padding:14px;
-  background:linear-gradient(45deg,#22c55e,#16a34a);
-  color:white;
-  border:none;
-  border-radius:12px;
-  margin-top:15px;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(45deg, #22c55e, #16a34a);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  margin-top: 15px;
+  font-size: 16px;
 }
 
-#map { height:300px; margin:20px; border-radius:15px; }
+#map { height: 300px; margin: 20px; border-radius: 15px; }
 
 .bottom-sheet {
   background: rgba(255,255,255,0.9);
   backdrop-filter: blur(10px);
-  padding:15px;
+  padding: 15px;
 }
 
-.price { font-weight:bold; color:green; }
+.price { font-weight: bold; color: green; }
 </style>
 </head>
 
@@ -132,71 +136,191 @@ header { text-align:center; padding:20px 10px; overflow:hidden; }
 
 <div id="loginScreen" style="padding:30px; text-align:center;">
   <h2>PahadiGaadi Login</h2>
-  <input id="loginName" placeholder="Name"><br><br>
-  <input id="loginPhone" placeholder="Phone"><br><br>
-  <button onclick="loginUser()">Continue</button>
+
+  <div class="input-box">
+    <input type="text" id="loginName" placeholder="👤 Your Name">
+  </div>
+
+  <div class="input-box">
+    <input type="tel" id="loginPhone" placeholder="📞 Phone Number">
+  </div>
+
+  <button class="book-btn" onclick="loginUser()">Continue</button>
 </div>
 
 <div id="rideScreen" style="display:none;">
 
 <header>
-  <span class="slide-left">Pahadi</span>
-  <img src="logo.png" class="logo-zoom">
-  <span class="slide-right">Gaadi</span>
+  <div style="display:flex; align-items:center; justify-content:center; gap:15px;">
+    <span class="slide-left">Pahadi</span>
+    <img src="logo.png" class="logo-zoom">
+    <span class="slide-right">Gaadi</span>
+  </div>
 </header>
 
-<div class="container">
-  <input id="pickup" placeholder="Pickup"><br><br>
-  <input id="drop" placeholder="Drop"><br><br>
+<div class="hero">
+  <h2>Your Ride in the Hills</h2>
+</div>
 
-  <div class="vehicle-box">
-    <div class="vehicle" onclick="selectVehicle(this,'Bike')">Bike</div>
-    <div class="vehicle" onclick="selectVehicle(this,'Car')">Car</div>
-    <div class="vehicle" onclick="selectVehicle(this,'SUV')">SUV</div>
+<div class="container">
+
+  <div class="input-box">
+    <input type="text" id="pickup" placeholder="📍 Pickup Location">
+    <button class="loc-btn" onclick="getLocation()">📍</button>
   </div>
 
-  <button id="bookRideBtn" onclick="bookRide()">Book Ride</button>
+  <div class="input-box">
+    <input type="text" id="drop" placeholder="🏁 Drop Location">
+  </div>
+
+  <div class="vehicle-box">
+    <div class="vehicle" onclick="selectVehicle(this,'Bike')">🏍 Bike</div>
+    <div class="vehicle" onclick="selectVehicle(this,'Car')">🚗 Car</div>
+    <div class="vehicle" onclick="selectVehicle(this,'SUV')">🚙 SUV</div>
+  </div>
+
+  <button id="bookRideBtn" class="book-btn" onclick="bookRide()">Book Ride</button>
 </div>
 
 <div id="map"></div>
 
-<b id="statusBox">Status: Not booked</b>
+<div class="bottom-sheet">
+  Distance: <span id="distance">0</span> km <br>
+  Fare: ₹<span id="price" class="price">0</span>
+</div>
+
+<div style="text-align:center; margin-top:10px;">
+  <b id="statusBox">Status: Not booked</b>
+</div>
 
 </div>
 
 <script>
-let selectedVehicle="";
-let map, directionsService, directionsRenderer;
+let selectedVehicle = "";
+let map, marker, directionsService, directionsRenderer;
 
-function loginUser(){
-  localStorage.setItem("userName","test");
-  localStorage.setItem("userPhone","123");
-  document.getElementById("loginScreen").style.display="none";
-  document.getElementById("rideScreen").style.display="block";
-}
+let driverMarker;
+let driverDirectionsService;
+let driverDirectionsRenderer;
 
-window.onload=function(){
-  const rideId=localStorage.getItem("currentRideId");
+let pickupLat = 0;
+let pickupLng = 0;
 
-  if(!rideId){
-    localStorage.removeItem("currentRideId");
-  }
-};
+function loginUser() {
+  let name = document.getElementById("loginName").value;
+  let phone = document.getElementById("loginPhone").value;
 
-function initMap(){
-  map=new google.maps.Map(document.getElementById("map"),{
-    center:{lat:28.6,lng:77.2},zoom:10
-  });
-}
-
-function bookRide(){
-  if(localStorage.getItem("currentRideId")){
-    alert("Ride already booked");
+  if (!name || !phone) {
+    alert("Bhai details fill kar 😅");
     return;
   }
-  localStorage.setItem("currentRideId","1");
+
+  localStorage.setItem("userName", name);
+  localStorage.setItem("userPhone", phone);
+
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("rideScreen").style.display = "block";
+}
+
+/* ✅ FIX 1 */
+window.onload = function () {
+  let name = localStorage.getItem("userName");
+  let phone = localStorage.getItem("userPhone");
+
+  if (name && phone) {
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("rideScreen").style.display = "block";
+  }
+
+  const rideId = localStorage.getItem("currentRideId");
+
+  const pickup = document.getElementById("pickup").value;
+  const drop = document.getElementById("drop").value;
+
+  if (rideId && pickup && drop) {
+    listenRideStatus(rideId);
+  } else {
+    localStorage.removeItem("currentRideId");
+  }
+}
+
+function initMap() {
+  const defaultLocation = { lat: 28.6139, lng: 77.2090 };
+
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: defaultLocation,
+    zoom: 13,
+  });
+
+  marker = new google.maps.Marker({
+    position: defaultLocation,
+    map: map,
+  });
+
+  directionsService = new google.maps.DirectionsService();
+  directionsRenderer = new google.maps.DirectionsRenderer();
+  directionsRenderer.setMap(map);
+
+  driverDirectionsService = new google.maps.DirectionsService();
+  driverDirectionsRenderer = new google.maps.DirectionsRenderer({
+    polylineOptions: { strokeColor: "#00ff00", strokeWeight: 5 }
+  });
+  driverDirectionsRenderer.setMap(map);
+
+  const pickupAuto = new google.maps.places.Autocomplete(document.getElementById("pickup"));
+  const dropAuto = new google.maps.places.Autocomplete(document.getElementById("drop"));
+
+  pickupAuto.addListener("place_changed", showRoute);
+  dropAuto.addListener("place_changed", showRoute);
+
+  listenDriverLocation();
+}
+
+/* बाकी code same */
+
+function bookRide() {
+
+  /* ✅ FIX 2 */
+  let existingRide = localStorage.getItem("currentRideId");
+  if (existingRide) {
+    alert("Ride already booked bhai 😅");
+    return;
+  }
+
+  let name = localStorage.getItem("userName");
+  let phone = localStorage.getItem("userPhone");
+  let pickup = document.getElementById("pickup").value;
+  let drop = document.getElementById("drop").value;
+
+  if (!pickup || !drop || !selectedVehicle) {
+    alert("Bhai sab fill kar 😅");
+    return;
+  }
+
+  let km = parseFloat(document.getElementById("distance").innerText) || 0;
+
+  let rideData = {
+    name,
+    phone,
+    pickup,
+    drop,
+    vehicle: selectedVehicle,
+    distance: km,
+    status: "Pending",
+    driverId: null,
+    pickupLat: pickupLat,
+    pickupLng: pickupLng,
+    time: new Date().toISOString()
+  };
+
+  saveRideToFirebase(rideData).then((rideId) => {
+    localStorage.setItem("currentRideId", rideId);
+    listenRideStatus(rideId);
+  });
 }
 </script>
+
+<!-- FIREBASE SAME -->
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdQvXgtRqcUX-Vo2ngB_xL2V-cxCydmTI&libraries=places&callback=initMap" async defer></script>
 
