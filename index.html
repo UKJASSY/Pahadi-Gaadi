@@ -195,7 +195,6 @@ let driverMarker;
 let driverDirectionsService;
 let driverDirectionsRenderer;
 
-// 🔥 ADDED
 let pickupLat = 0;
 let pickupLng = 0;
 
@@ -302,7 +301,6 @@ function showRoute() {
 
       let leg = result.routes[0].legs[0];
 
-      // 🔥 ADDED
       pickupLat = leg.start_location.lat();
       pickupLng = leg.start_location.lng();
 
@@ -341,12 +339,9 @@ function bookRide() {
     vehicle: selectedVehicle,
     distance: km,
     status: "Pending",
-
-    // 🔥 UPDATED
     driverId: null,
     pickupLat: pickupLat,
     pickupLng: pickupLng,
-
     time: new Date().toISOString()
   };
 
@@ -368,7 +363,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-// 🔥 FIX
 window.db = getFirestore(app);
 window.doc = doc;
 window.onSnapshot = onSnapshot;
@@ -378,14 +372,24 @@ window.saveRideToFirebase = async function(data) {
   return docRef.id;
 };
 
+// 🔥 UPDATED FUNCTION
 window.listenRideStatus = function(rideId) {
   const ref = doc(db, "rides", rideId);
 
   onSnapshot(ref, (docSnap) => {
     if (docSnap.exists()) {
       const ride = docSnap.data();
+
       document.getElementById("statusBox").innerText =
         "Status: " + (ride.status || "Pending");
+
+      const bookBtn = document.querySelector(".book-btn");
+
+      if (ride.status === "accepted" || ride.status === "Accepted") {
+        bookBtn.innerText = "Booked";
+        bookBtn.disabled = true;
+        bookBtn.style.backgroundColor = "gray";
+      }
     }
   });
 };
