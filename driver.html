@@ -45,8 +45,31 @@ button {
 
 <body>
 
+<!-- 🔥 NEW HEADER (ONLY CHANGE) -->
+<div style="text-align:center; margin-top:25px;">
+
+  <div style="display:flex; align-items:center; justify-content:center; gap:15px;">
+    
+    <span style="font-size:32px; font-weight:800; letter-spacing:1px;">
+      Pahadi
+    </span>
+    
+    <img src="logo.png" 
+         style="width:55px; height:55px; border-radius:12px; background:white; padding:5px;">
+    
+    <span style="font-size:32px; font-weight:800; letter-spacing:1px;">
+      Gaadi
+    </span>
+
+  </div>
+
+  <div style="margin-top:8px; font-size:20px; font-weight:600; opacity:0.9;">
+    Driver
+  </div>
+
+</div>
+
 <div class="container">
-  <h2>🚗 PahadiGaadi Driver</h2>
   <div id="rides"></div>
 </div>
 
@@ -79,11 +102,9 @@ const db = getFirestore(app);
 const ridesDiv = document.getElementById("rides");
 const driverId = "driver1";
 
-// 📍 DRIVER LOCATION
 let driverLat = 0;
 let driverLng = 0;
 
-// 📏 DISTANCE FUNCTION
 function getDistance(lat1, lon1, lat2, lon2) {
   const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -99,7 +120,6 @@ function getDistance(lat1, lon1, lat2, lon2) {
   return R * c;
 }
 
-// 🔥 ONLY PENDING RIDES
 const q = query(
   collection(db, "rides"),
   where("status", "==", "Pending")
@@ -151,7 +171,7 @@ onSnapshot(q, (snapshot) => {
 
     btn.onclick = async () => {
       await updateDoc(doc(db, "rides", data.id), {
-        status: "accepted",   // ✅ FINAL FIX
+        status: "accepted",
         driverId: driverId
       });
     };
@@ -161,7 +181,6 @@ onSnapshot(q, (snapshot) => {
   });
 });
 
-// 📍 DRIVER LIVE LOCATION
 let lastUpdate = 0;
 
 navigator.geolocation.watchPosition(async (pos) => {
