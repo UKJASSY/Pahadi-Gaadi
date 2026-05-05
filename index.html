@@ -18,24 +18,8 @@ body {
 }
 
 header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.logo img {
-  width: 55px;
-  height: 55px;
-  border-radius: 10px;
-  background: white;
-  padding: 4px;
+  text-align: center;
+  padding: 20px 10px;
 }
 
 .hero { text-align: center; padding: 10px; }
@@ -143,10 +127,21 @@ header {
 
 <div id="rideScreen" style="display:none;">
 
+<!-- 🔥 UPDATED HEADER -->
 <header>
-  <div class="logo">
-    <img src="logo.png">
-    <span>PahadiGaadi</span>
+  <div style="display:flex; align-items:center; justify-content:center; gap:15px;">
+    
+    <span style="font-size:32px; font-weight:800; letter-spacing:1px;">
+      Pahadi
+    </span>
+
+    <img src="logo.png"
+         style="width:55px; height:55px; border-radius:12px; background:white; padding:5px;">
+
+    <span style="font-size:32px; font-weight:800; letter-spacing:1px;">
+      Gaadi
+    </span>
+
   </div>
 </header>
 
@@ -171,7 +166,6 @@ header {
     <div class="vehicle" onclick="selectVehicle(this,'SUV')">🚙 SUV</div>
   </div>
 
-  <!-- 🔥 FIXED BUTTON -->
   <button id="bookRideBtn" class="book-btn" onclick="bookRide()">Book Ride</button>
 </div>
 
@@ -224,7 +218,6 @@ window.onload = function () {
     document.getElementById("rideScreen").style.display = "block";
   }
 
-  // 🔥 restore ride listener
   const rideId = localStorage.getItem("currentRideId");
   if (rideId) {
     listenRideStatus(rideId);
@@ -353,7 +346,7 @@ function bookRide() {
   };
 
   saveRideToFirebase(rideData).then((rideId) => {
-    localStorage.setItem("currentRideId", rideId); // 🔥
+    localStorage.setItem("currentRideId", rideId);
     listenRideStatus(rideId);
   });
 }
@@ -380,7 +373,6 @@ window.saveRideToFirebase = async function(data) {
   return docRef.id;
 };
 
-// 🔥 FINAL FUNCTION
 window.listenRideStatus = function(rideId) {
   const ref = doc(db, "rides", rideId);
 
