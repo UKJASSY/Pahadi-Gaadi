@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PahadiGaadi Navigation</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:url('bg.jpg.jpeg') no-repeat center center/cover;
+  color:white;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,0.65);
+  z-index:-1;
+}
+
+.header{
+  text-align:center;
+  padding:20px 10px;
+}
+
+.brand{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:12px;
+  font-size:28px;
+  font-weight:800;
+  color:#a8324a;
+}
+
+.brand img{
+  width:55px;
+  height:55px;
+  border-radius:10px;
+  background:white;
+  padding:5px;
+}
+
+.sub{
+  margin-top:5px;
+  opacity:0.8;
+}
+
+.container{
+  background:rgba(255,255,255,0.92);
+  color:black;
+  margin:20px;
+  padding:20px;
+  border-radius:20px;
+  backdrop-filter:blur(10px);
+}
+
+.info{
+  margin-bottom:10px;
+  line-height:1.7;
+}
+
+#map{
+  width:100%;
+  height:350px;
+  border-radius:15px;
+  margin-top:15px;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  margin-top:12px;
+  font-size:16px;
+  font-weight:bold;
+  color:white;
+  cursor:pointer;
+}
+
+.nav-btn{
+  background:#16a34a;
+}
+
+.back-btn{
+  background:#0f172a;
+}
+
+.status{
+  font-weight:bold;
+  color:green;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="brand">
+    <span>Pahadi</span>
+    <img src="logo.png">
+    <span>Gaadi</span>
+  </div>
+
+  <div class="sub">Driver Navigation</div>
+</div>
+
+<div class="container">
+
+  <h2>🚗 Active Ride</h2>
+
+  <div class="info">
+    👤 Customer:
+    <span id="customerName">Loading...</span>
+  </div>
+
+  <div class="info">
+    📍 Pickup:
+    <span id="pickupText">Loading...</span>
+  </div>
+
+  <div class="info">
+    🏁 Drop:
+    <span id="dropText">Loading...</span>
+  </div>
+
+  <div class="info">
+    🚗 Vehicle:
+    <span id="vehicleText">Loading...</span>
+  </div>
+
+  <div class="info">
+    📏 Distance:
+    <span id="distanceText">0</span> km
+  </div>
+
+  <div class="info">
+    📌 Status:
+    <span class="status" id="statusText">Accepted</span>
+  </div>
+
+  <button class="nav-btn" onclick="startNavigation()">
+    Start Navigation
+  </button>
+
+  <button class="back-btn" onclick="goBack()">
+    Back to Driver Panel
+  </button>
+
+  <div id="map"></div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+
+import {
+  getFirestore,
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAUOnQmWGHbJFl9Yy54tCvwv-wrSfiAvnc",
+  authDomain: "pahadigaadi.firebaseapp.com",
+  projectId: "pahadigaadi",
+  storageBucket: "pahadigaadi.firebasestorage.app",
+  messagingSenderId: "465488936633",
+  appId: "1:465488936633:web:7e5f46325366bf0bf66568"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let map;
+let directionsService;
+let directionsRenderer;
+
+let pickupLat = 0;
+let pickupLng = 0;
+
+let rideData = null;
+
+window.initMap = async function () {
+
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: { lat: 28.6139, lng: 77.2090 },
+    zoom: 13
+  });
+
+  directionsService = new google.maps.DirectionsService();
+
+  directionsRenderer = new google.maps.DirectionsRenderer({
+    suppressMarkers: false
+  });
+
+  directionsRenderer.setMap(map);
+
+  loadRide();
+
+};
+
+async function loadRide() {
+
+  const rideId = localStorage.getItem("activeRideId");
+
+  if (!rideId) {
+    alert("No active ride found");
+    return;
+  }
+
+  const rideRef = doc(db, "rides", rideId);
+
+  const rideSnap = await getDoc(rideRef);
+
+  if (!rideSnap.exists()) {
+    alert("Ride not found");
+    return;
+  }
+
+  rideData = rideSnap.data();
+
+  document.getElementById("customerName").innerText =
+    rideData.name || "-";
+
+  document.getElementById("pickupText").innerText =
+    rideData.pickup || "-";
+
+  document.getElementById("dropText").innerText =
+    rideData.drop || "-";
+
+  document.getElementById("vehicleText").innerText =
+    rideData.vehicle || "-";
+
+  document.getElementById("distanceText").innerText =
+    rideData.distance || "0";
+
+  document.getElementById("statusText").innerText =
+    rideData.status || "accepted";
+
+  pickupLat = rideData.pickupLat;
+  pickupLng = rideData.pickupLng;
+
+  getDriverLocation();
+
+}
+
+function getDriverLocation() {
+
+  navigator.geolocation.getCurrentPosition((position) => {
+
+    const driverPos = {
+      lat: position.coords.latitude,
+      lng: position.coords.longitude
+    };
+
+    const pickupPos = {
+      lat: pickupLat,
+      lng: pickupLng
+    };
+
+    directionsService.route({
+      origin: driverPos,
+      destination: pickupPos,
+      travelMode: "DRIVING"
+    }, (result, status) => {
+
+      if (status === "OK") {
+
+        directionsRenderer.setDirections(result);
+
+      } else {
+
+        alert("Route load nahi hua");
+
+      }
+
+    });
+
+  });
+
+}
+
+window.startNavigation = function () {
+
+  if (!pickupLat || !pickupLng) {
+    alert("Pickup location missing");
+    return;
+  }
+
+  window.open(
+    `https://www.google.com/maps/dir/?api=1&destination=${pickupLat},${pickupLng}&travelmode=driving`,
+    "_blank"
+  );
+
+};
+
+window.goBack = function () {
+
+  window.location.href = "driver.html";
+
+};
+
+</script>
+
+<script
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdQvXgtRqcUX-Vo2ngB_xL2V-cxCydmTI&callback=initMap"
+async
+defer>
+</script>
+
+</body>
+</html>
