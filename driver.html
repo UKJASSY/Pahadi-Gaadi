@@ -110,9 +110,9 @@ button {
 </div>
 
 <script type="module">
-/* 🔥 SAME ORIGINAL CODE — UNTOUCHED */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+
 import {
   getFirestore,
   collection,
@@ -144,17 +144,20 @@ let driverLat = 0;
 let driverLng = 0;
 
 function getDistance(lat1, lon1, lat2, lon2) {
+
   const R = 6371;
+
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lon2 - lon1) * Math.PI / 180;
 
   const a =
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1 * Math.PI/180) *
-    Math.cos(lat2 * Math.PI/180) *
-    Math.sin(dLon/2) * Math.sin(dLon/2);
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
 
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
   return R * c;
 }
 
@@ -164,11 +167,13 @@ const q = query(
 );
 
 onSnapshot(q, (snapshot) => {
+
   ridesDiv.innerHTML = "";
 
   let rides = [];
 
   snapshot.forEach((docSnap) => {
+
     const data = docSnap.data();
 
     if (!data.pickupLat || !data.pickupLng) return;
@@ -185,6 +190,7 @@ onSnapshot(q, (snapshot) => {
       ...data,
       distanceFromDriver: dist
     });
+
   });
 
   rides.sort((a, b) => a.distanceFromDriver - b.distanceFromDriver);
@@ -192,6 +198,7 @@ onSnapshot(q, (snapshot) => {
   rides.slice(0, 3).forEach((data) => {
 
     const card = document.createElement("div");
+
     card.className = "card";
 
     card.innerHTML = `
@@ -204,19 +211,29 @@ onSnapshot(q, (snapshot) => {
     `;
 
     const btn = document.createElement("button");
+
     btn.className = "accept";
     btn.innerText = "Accept Ride";
 
     btn.onclick = async () => {
+
       await updateDoc(doc(db, "rides", data.id), {
-        status: "Accepted",
+        status: "accepted",
         driverId: driverId
       });
+
+      localStorage.setItem("activeRideId", data.id);
+
+      window.location.href = "navigation.html";
+
     };
 
     card.appendChild(btn);
+
     ridesDiv.appendChild(card);
+
   });
+
 });
 
 let lastUpdate = 0;
@@ -224,7 +241,9 @@ let lastUpdate = 0;
 navigator.geolocation.watchPosition(async (pos) => {
 
   const now = Date.now();
+
   if (now - lastUpdate < 3000) return;
+
   lastUpdate = now;
 
   const lat = pos.coords.latitude;
@@ -236,21 +255,27 @@ navigator.geolocation.watchPosition(async (pos) => {
   const driverRef = doc(db, "drivers", driverId);
 
   try {
+
     await updateDoc(driverRef, {
       lat,
       lng,
       lastUpdated: new Date().toISOString()
     });
+
   } catch (e) {
+
     await setDoc(driverRef, {
       lat,
       lng,
       totalEarning: 0
     });
+
   }
 
 }, (err) => {
+
   console.log("Location error:", err);
+
 }, {
   enableHighAccuracy: true
 });
