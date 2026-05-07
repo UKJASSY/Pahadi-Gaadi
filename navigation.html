@@ -197,7 +197,7 @@ let dropAddress = "";
 
 let rideData = null;
 
-window.initMap = async function () {
+async function initMap() {
 
   map = new google.maps.Map(document.getElementById("map"), {
     center: { lat: 28.6139, lng: 77.2090 },
@@ -214,7 +214,9 @@ window.initMap = async function () {
 
   loadRide();
 
-};
+}
+
+window.initMap = initMap;
 
 async function loadRide() {
 
