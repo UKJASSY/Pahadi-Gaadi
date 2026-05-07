@@ -224,7 +224,29 @@ header {
 <div style="text-align:center; margin-top:10px;">
   <b id="statusBox">Status: Not booked</b>
 </div>
+<div id="ratingPopup" style="
+display:none;
+background:white;
+color:black;
+margin:20px;
+padding:20px;
+border-radius:20px;
+text-align:center;
+">
 
+<h2>🎉 Ride Completed</h2>
+
+<p>How was your ride?</p>
+
+<div id="stars" style="font-size:32px;">
+  <span onclick="submitRating(1)">⭐</span>
+  <span onclick="submitRating(2)">⭐</span>
+  <span onclick="submitRating(3)">⭐</span>
+  <span onclick="submitRating(4)">⭐</span>
+  <span onclick="submitRating(5)">⭐</span>
+</div>
+
+</div>
 </div>
 
 <!-- 🔥 ORIGINAL JS (unchanged) -->
@@ -397,7 +419,7 @@ function bookRide() {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-import { getFirestore, addDoc, collection, onSnapshot, doc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+import { getFirestore, addDoc, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAUOnQmWGHbJFl9Yy54tCvwv-wrSfiAvnc",
@@ -435,8 +457,44 @@ window.listenRideStatus = function(rideId) {
         bookBtn.disabled = true;
         bookBtn.style.backgroundColor = "gray";
       }
+      if (status === "completed") {
+
+  document.getElementById("ratingPopup").style.display = "block";
+
+  bookBtn.innerText = "Ride Completed";
+
+  bookBtn.disabled = true;
+
+  bookBtn.style.backgroundColor = "gray";
+
+}
     }
   });
+};
+  window.submitRating = async function(stars) {
+
+  const rideId = localStorage.getItem("currentRideId");
+
+  if (!rideId) return;
+
+  try {
+
+    await updateDoc(doc(db, "rides", rideId), {
+      rating: stars
+    });
+
+    alert("Thanks for your feedback ⭐");
+
+    document.getElementById("ratingPopup").style.display = "none";
+
+  } catch(e) {
+
+    console.log(e);
+
+    alert("Rating failed");
+
+  }
+
 };
 </script>
 
