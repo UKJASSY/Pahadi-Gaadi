@@ -419,6 +419,7 @@ function bookRide() {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 import { getFirestore, addDoc, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -427,7 +428,17 @@ const firebaseConfig = {
   projectId: "pahadigaadi",
 };
 
-const app = initializeApp(firebaseConfig);
+  const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+signInAnonymously(auth)
+  .then(() => {
+    console.log("Anonymous login success");
+  })
+  .catch((error) => {
+    console.log(error);
+  });
 
 window.db = getFirestore(app);
 window.doc = doc;
