@@ -177,7 +177,9 @@ header {
     <input type="tel" id="loginPhone" placeholder="📞 Phone Number">
   </div>
 
-  <button class="book-btn" onclick="loginUser()">Continue</button>
+  <button class="book-btn" onclick="loginUser()">
+    Continue
+  </button>
 </div>
 
 <div id="rideScreen" style="display:none;">
@@ -261,21 +263,7 @@ let driverDirectionsRenderer;
 let pickupLat = 0;
 let pickupLng = 0;
 
-function loginUser() {
-  let name = document.getElementById("loginName").value;
-  let phone = document.getElementById("loginPhone").value;
 
-  if (!name || !phone) {
-    alert("Bhai details fill kar 😅");
-    return;
-  }
-
-  localStorage.setItem("userName", name);
-  localStorage.setItem("userPhone", phone);
-
-  document.getElementById("loginScreen").style.display = "none";
-  document.getElementById("rideScreen").style.display = "block";
-}
 
 window.onload = function () {
   let name = localStorage.getItem("userName");
@@ -419,8 +407,16 @@ function bookRide() {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-  import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
-import { getFirestore, addDoc, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+import {
+  getFirestore,
+  addDoc,
+  collection,
+  onSnapshot,
+  doc,
+  updateDoc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAUOnQmWGHbJFl9Yy54tCvwv-wrSfiAvnc",
@@ -432,17 +428,52 @@ const firebaseConfig = {
 
 const auth = getAuth(app);
 
-signInAnonymously(auth)
-  .then(() => {
-    console.log("Anonymous login success");
-  })
-  .catch((error) => {
-    console.log(error);
-  });
 
 window.db = getFirestore(app);
 window.doc = doc;
 window.onSnapshot = onSnapshot;
+  window.loginUser = async function () {
+
+  let name = document.getElementById("loginName").value.trim();
+  let phone = document.getElementById("loginPhone").value.trim();
+
+  if (!name || !phone) {
+    alert("Bhai details fill kar 😅");
+    return;
+  }
+
+  const userId = "user_" + phone;
+
+  const userData = {
+    name: name,
+    phone: phone,
+    createdAt: new Date().toISOString()
+  };
+
+  try {
+
+    await updateDoc(doc(db, "users", userId), userData)
+      .catch(async () => {
+
+        await setDoc(doc(db, "users", userId), userData);
+
+      });
+
+    localStorage.setItem("userId", userId);
+    localStorage.setItem("userName", name);
+    localStorage.setItem("userPhone", phone);
+
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("rideScreen").style.display = "block";
+
+  } catch (e) {
+
+    console.log(e);
+
+    alert("Login failed");
+
+  }
+};
 
 window.saveRideToFirebase = async function(data) {
   const docRef = await addDoc(collection(db, "rides"), data);
