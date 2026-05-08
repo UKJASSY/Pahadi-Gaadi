@@ -190,6 +190,19 @@ header {
     <img src="logo.png" class="logo-zoom">
     <span class="slide-right">Gaadi</span>
   </div>
+  <div style="position:absolute; top:20px; right:20px;">
+  <button onclick="logoutUser()" style="
+    background:#dc2626;
+    color:white;
+    border:none;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:12px;
+    cursor:pointer;
+  ">
+    Logout
+  </button>
+</div>
 </header>
 
 <div class="hero">
@@ -262,8 +275,14 @@ let driverDirectionsRenderer;
 
 let pickupLat = 0;
 let pickupLng = 0;
+  
+function logoutUser() {
 
+  localStorage.clear();
 
+  location.reload();
+
+}
 
 window.onload = function () {
   let name = localStorage.getItem("userName");
