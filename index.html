@@ -392,6 +392,7 @@ function showRoute() {
 }
 
 function bookRide() {
+  let userid = localStorage.getitem("userid");
   let name = localStorage.getItem("userName");
   let phone = localStorage.getItem("userPhone");
   let pickup = document.getElementById("pickup").value;
