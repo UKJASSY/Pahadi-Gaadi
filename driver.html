@@ -169,7 +169,7 @@ const db = getFirestore(app);
 
 const ridesDiv = document.getElementById("rides");
 const driverId = "driver1";
-
+let activeRideId = null;
 let driverLat = 0;
 let driverLng = 0;
 let map;
@@ -295,7 +295,7 @@ onSnapshot(q, (snapshot) => {
       });
 
       localStorage.setItem("activeRideId", data.id);
-
+activeRideId = data.id;
       document.getElementById("map").style.display = "block";
 
 document.getElementById("navigationPanel").style.display = "block";
@@ -376,7 +376,49 @@ navigator.geolocation.watchPosition(async (pos) => {
 }, {
   enableHighAccuracy: true
 });
+document.getElementById("startRideBtn").onclick = async () => {
 
+  if(!activeRideId) return;
+
+  try{
+
+    await updateDoc(doc(db, "rides", activeRideId), {
+      status: "ongoing"
+    });
+
+    document.getElementById("navStatus").innerText =
+      "Ride Started";
+
+  }catch(e){
+
+    console.log(e);
+
+  }
+
+};
+
+document.getElementById("completeRideBtn").onclick = async () => {
+
+  if(!activeRideId) return;
+
+  try{
+
+    await updateDoc(doc(db, "rides", activeRideId), {
+      status: "completed"
+    });
+
+    document.getElementById("navStatus").innerText =
+      "Ride Completed";
+
+    alert("Ride Completed 🎉");
+
+  }catch(e){
+
+    console.log(e);
+
+  }
+
+};
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdQvXgtRqcUX-Vo2ngB_xL2V-cxCydmTI&libraries=places"></script>
 </body>
