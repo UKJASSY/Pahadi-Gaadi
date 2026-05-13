@@ -266,10 +266,35 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+async function sendMessage(rideId, sender, text) {
 
+if (!text.trim()) return;
+
+await addDoc(collection(db, "rides", rideId, "messages"), {
+
+sender: sender,
+text: text,
+timestamp: serverTimestamp(),
+read: false
+
+});
+
+}
 const ridesDiv = document.getElementById("rides");
 const driverId = "driver1";
 let activeRideId = null;
+  document.getElementById("sendMsgBtn").onclick = async () => {
+
+const text =
+document.getElementById("chatInput").value;
+
+if (!activeRideId) return;
+
+await sendMessage(activeRideId, "driver", text);
+
+document.getElementById("chatInput").value = "";
+
+};
 let driverLat = 0;
 let driverLng = 0;
 let map;
