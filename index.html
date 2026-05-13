@@ -709,10 +709,10 @@ function bookRide() {
     time: new Date().toISOString()
   };
 
-  saveRideToFirebase(rideData).then((rideId) => {
-    localStorage.setItem("currentRideId", rideId);
-    listenRideStatus(rideId);
-  });
+ addDoc(collection(db, "rides"), rideData).then((docRef) => {
+localStorage.setItem("currentRideId", docRef.id);
+listenRideStatus(docRef.id);
+});
 }
 </script>
 
