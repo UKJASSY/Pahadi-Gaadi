@@ -129,12 +129,10 @@ button {
 
     <p id="navStatus">Driver heading to pickup...</p>
 
-    <button class="start" id="startRideBtn">
-      Start Ride
+    <button class="start" onclick="startRide()">
     </button>
 
-    <button class="end" id="completeRideBtn">
-      Complete Ride
+    <button class="end" onclick="completeRide()">
     </button>
 </div>
 </div>
@@ -376,7 +374,7 @@ navigator.geolocation.watchPosition(async (pos) => {
 }, {
   enableHighAccuracy: true
 });
-document.getElementById("startRideBtn").onclick = async () => {
+window.startRide = async function () {
 
   if(!activeRideId) return;
 
@@ -389,6 +387,8 @@ document.getElementById("startRideBtn").onclick = async () => {
     document.getElementById("navStatus").innerText =
       "Ride Started";
 
+    alert("Ride Started 🚗");
+
   }catch(e){
 
     console.log(e);
@@ -397,7 +397,7 @@ document.getElementById("startRideBtn").onclick = async () => {
 
 };
 
-document.getElementById("completeRideBtn").onclick = async () => {
+window.completeRide = async function () {
 
   if(!activeRideId) return;
 
