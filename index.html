@@ -744,6 +744,8 @@ const auth = getAuth(app);
 
 
 window.db = getFirestore(app);
+window.addDoc = addDoc;
+window.collection = collection;
 window.doc = doc;
 window.onSnapshot = onSnapshot;
   window.loginUser = async function () {
