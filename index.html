@@ -369,6 +369,10 @@ header button{
   }
 
 }
+  .glow-line {
+  filter: drop-shadow(0 0 8px #22c55e)
+          drop-shadow(0 0 15px #22c55e);
+}
 </style>
 </head>
 
@@ -562,8 +566,13 @@ function initMap() {
 
   driverDirectionsService = new google.maps.DirectionsService();
   driverDirectionsRenderer = new google.maps.DirectionsRenderer({
-    polylineOptions: { strokeColor: "#00ff00", strokeWeight: 5 }
-  });
+  polylineOptions: {
+    strokeColor: "#22c55e",
+    strokeOpacity: 0.9,
+    strokeWeight: 6
+  },
+  suppressMarkers: false
+});
   driverDirectionsRenderer.setMap(map);
 
   const pickupAuto = new google.maps.places.Autocomplete(document.getElementById("pickup"));
