@@ -615,17 +615,22 @@ function initMap() {
   pickupAuto.addListener("place_changed", showRoute);
   dropAuto.addListener("place_changed", showRoute);
 
+  setTimeout(() => {
   listenDriverLocation();
+}, 1500);
 }
 
 function listenDriverLocation() {
-  const ref = doc(db, "drivers", "driver1");
+  const ref = window.doc(window.db, "drivers", "driver1");
 
-  onSnapshot(ref, (docSnap) => {
+  window.onSnapshot(ref, (docSnap) => {
     if (!docSnap.exists()) return;
 
     const data = docSnap.data();
-    const driverPos = { lat: data.lat, lng: data.lng };
+    const driverPos = {
+      lat: data.lat,
+      lng: data.lng
+    };
 
     if (!driverMarker) {
       driverMarker = new google.maps.Marker({
@@ -637,6 +642,7 @@ function listenDriverLocation() {
       driverMarker.setPosition(driverPos);
     }
   });
+}
 }
 
 function selectVehicle(el, v) {
@@ -709,10 +715,22 @@ function bookRide() {
     time: new Date().toISOString()
   };
 
- addDoc(collection(db, "rides"), rideData).then((docRef) => {
-localStorage.setItem("currentRideId", docRef.id);
-listenRideStatus(docRef.id);
-});
+  window.addDoc(
+    window.collection(window.db, "rides"),
+    rideData
+  ).then((docRef) => {
+
+    localStorage.setItem("currentRideId", docRef.id);
+
+    window.listenRideStatus(docRef.id);
+
+  }).catch((e) => {
+
+    console.log(e);
+
+    alert("Ride booking failed");
+
+  });
 }
 </script>
 
