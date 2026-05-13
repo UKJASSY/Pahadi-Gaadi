@@ -192,8 +192,48 @@ button {
   </div>
   <div class="sub">Driver</div>
 </div>
+<div id="loginBox" class="container">
 
-<div class="container">
+<h2>📱 Driver OTP Login</h2>
+
+<input
+  type="text"
+  id="phoneNumber"
+  placeholder="+91XXXXXXXXXX"
+  style="
+    width:100%;
+    padding:12px;
+    margin-bottom:10px;
+    border-radius:10px;
+    border:none;
+  "
+>
+
+<button id="sendOtpBtn" class="accept">
+  Send OTP
+</button>
+
+<input
+  type="text"
+  id="otpCode"
+  placeholder="Enter OTP"
+  style="
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border-radius:10px;
+    border:none;
+  "
+>
+
+<button id="verifyOtpBtn" class="start">
+  Verify OTP
+</button>
+
+<div id="recaptcha-container"></div>
+
+</div>
+<div class="container" id="driverPanel" style="display:none;">
   <h2>🚗 Driver Panel</h2>
   <div id="rides"></div>
   <div id="map"></div>
@@ -242,7 +282,12 @@ button {
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-
+import {
+  getAuth,
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 import {
   getFirestore,
   collection,
@@ -266,7 +311,11 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
+let confirmationResult = null;
+
+let driverId = null;
   window.db = db;
 window.addDoc = addDoc;
 window.collection = collection;
@@ -287,7 +336,7 @@ read: false
 
 }
 const ridesDiv = document.getElementById("rides");
-const driverId = "driver1";
+
 let activeRideId = null;
   document.getElementById("sendMsgBtn").onclick = async () => {
 
@@ -552,6 +601,94 @@ window.completeRide = async function () {
   }
 
 };
+  window.recaptchaVerifier = new RecaptchaVerifier(
+  auth,
+  'recaptcha-container',
+  {
+    size: 'invisible'
+  }
+);
+
+document.getElementById("sendOtpBtn").onclick =
+async () => {
+
+  const phone =
+    document.getElementById("phoneNumber").value;
+
+  try {
+
+    confirmationResult =
+      await signInWithPhoneNumber(
+        auth,
+        phone,
+        window.recaptchaVerifier
+      );
+
+    alert("OTP Sent ✅");
+
+  } catch (e) {
+
+    console.log(e);
+
+    alert("OTP Failed");
+
+  }
+
+};
+
+document.getElementById("verifyOtpBtn").onclick =
+async () => {
+
+  const otp =
+    document.getElementById("otpCode").value;
+
+  try {
+
+    const result =
+      await confirmationResult.confirm(otp);
+
+    const user = result.user;
+
+    driverId = user.uid;
+
+    localStorage.setItem(
+      "driverUid",
+      user.uid
+    );
+
+    document.getElementById("loginBox")
+      .style.display = "none";
+
+    document.getElementById("driverPanel")
+      .style.display = "block";
+
+    alert("Driver Login Success 🚗");
+
+  } catch (e) {
+
+    console.log(e);
+
+    alert("Invalid OTP");
+
+  }
+
+};
+
+onAuthStateChanged(auth, (user) => {
+
+  if(user){
+
+    driverId = user.uid;
+
+    document.getElementById("loginBox")
+      .style.display = "none";
+
+    document.getElementById("driverPanel")
+      .style.display = "block";
+
+  }
+
+});
   document.getElementById("chatBtn").onclick = () => {
 
   const popup = document.getElementById("chatPopup");
