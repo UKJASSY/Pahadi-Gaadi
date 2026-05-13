@@ -783,7 +783,7 @@ window.onSnapshot = onSnapshot;
 
   }
 };
-
+window.addDoc = addDoc;
 window.saveRideToFirebase = async function(data) {
   const docRef = await addDoc(collection(db, "rides"), data);
   return docRef.id;
