@@ -733,6 +733,10 @@ function bookRide() {
     localStorage.setItem("currentRideId", docRef.id);
 
     window.listenRideStatus(docRef.id);
+    
+    document.getElementById("activeRideBox").style.display = "block";
+
+document.getElementById("rideStatus").innerText = "Pending";
 
   }).catch((e) => {
 
