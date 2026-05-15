@@ -561,49 +561,57 @@ navigator.geolocation.watchPosition(async (pos) => {
   enableHighAccuracy: true
 });
 window.startRide = async function () {
-
+ 
   if(!activeRideId) return;
-
+ 
   try{
-
+ 
     await updateDoc(doc(db, "rides", activeRideId), {
       status: "ongoing"
     });
-
+ 
     document.getElementById("navStatus").innerText =
       "Ride Started";
-
+ 
+    // 🔥 Button text change
+    document.querySelector(".start").innerText =
+      "Ride Started";
+ 
     alert("Ride Started 🚗");
-
+ 
   }catch(e){
-
+ 
     console.log(e);
-
+ 
   }
-
+ 
 };
 
 window.completeRide = async function () {
-
+ 
   if(!activeRideId) return;
-
+ 
   try{
-
+ 
     await updateDoc(doc(db, "rides", activeRideId), {
       status: "completed"
     });
-
+ 
     document.getElementById("navStatus").innerText =
       "Ride Completed";
-
+ 
+    // 🔥 Button text change
+    document.querySelector(".end").innerText =
+      "Ride Completed";
+ 
     alert("Ride Completed 🎉");
-
+ 
   }catch(e){
-
+ 
     console.log(e);
-
+ 
   }
-
+ 
 };
   window.recaptchaVerifier = new RecaptchaVerifier(
   auth,
