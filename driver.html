@@ -419,7 +419,7 @@ function initMap() {
 }
 const q = query(
   collection(db, "rides"),
-  where("status", "==", "pending")
+  where("status", "==", "Pending")
 );
 
 onSnapshot(q, (snapshot) => {
