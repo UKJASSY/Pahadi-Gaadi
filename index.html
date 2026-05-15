@@ -804,7 +804,14 @@ window.onSnapshot = onSnapshot;
 };
 window.addDoc = addDoc;
 window.saveRideToFirebase = async function(data) {
+  const bookBtn =
+document.getElementById("bookRideBtn");
+ 
+bookBtn.disabled = true;
+ 
+bookBtn.innerText = "Booking...";
   const docRef = await window.addDoc(collection(db, "rides"), data);
+  bookBtn.innerText = "Ride Booked ✅";
   return docRef.id;
 };
 
