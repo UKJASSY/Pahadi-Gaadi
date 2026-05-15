@@ -533,6 +533,7 @@ navigator.geolocation.watchPosition(async (pos) => {
   driverLat = lat;
   driverLng = lng;
 
+  if(!driverId) return;
   const driverRef = doc(db, "drivers", driverId);
 
   try {
