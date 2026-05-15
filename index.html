@@ -761,6 +761,40 @@ document.getElementById("rideStatus").innerText = "Pending";
 
   });
 }
+  window.cancelRide = async function () {
+
+  let rideId = localStorage.getItem("currentRideId");
+
+  if (!rideId) {
+    alert("No active ride found");
+    return;
+  }
+
+  try {
+
+    await window.updateDoc(
+      window.doc(window.db, "rides", rideId),
+      {
+        status: "cancelled"
+      }
+    );
+
+    alert("Ride cancelled");
+
+    document.getElementById("activeRideBox").style.display = "none";
+
+    document.getElementById("bookRideBtn").innerText = "Book Ride";
+
+  } catch (e) {
+
+    console.log(e);
+
+    alert("Cancellation failed");
+
+  }
+
+};
+  
 </script>
 
 <script type="module">
