@@ -389,7 +389,7 @@ header button{
     <input type="tel" id="loginPhone" placeholder="📞 Phone Number">
   </div>
 
-<button class="book-btn" id="loginBtn" onclick="window.loginUser()">
+<button class="book-btn" id="loginBtn">
   Continue
 </button>
 </div>
@@ -868,6 +868,7 @@ window.updateDoc = updateDoc;
 window.onSnapshot = onSnapshot;
   window.doc = doc;
   window.loginUser = async function () {
+document.getElementById("loginBtn").onclick = function () {
 
   let name = document.getElementById("loginName").value.trim();
   let phone = document.getElementById("loginPhone").value.trim();
@@ -877,40 +878,11 @@ window.onSnapshot = onSnapshot;
     return;
   }
 
-  const userId = "user_" + phone;
+  localStorage.setItem("userName", name);
+  localStorage.setItem("userPhone", phone);
 
-    let userPin = localStorage.getItem("userPin");
-
-if (!userPin) {
-  userPin = Math.floor(1000 + Math.random() * 9000).toString();
-  localStorage.setItem("userPin", userPin);
-}
-  const userData = {
-    name: name,
-    phone: phone,
-    pin: userPin,
-  }
-    createdAt: new Date().toISOString()
-  };
-
-  try {
-
-   await setDoc(doc(db, "users", userId), userData);
-
-    localStorage.setItem("userId", userId);
-    localStorage.setItem("userName", name);
-    localStorage.setItem("userPhone", phone);
-
-    document.getElementById("loginScreen").style.display = "none";
-    document.getElementById("rideScreen").style.display = "block";
-
-  } catch (e) {
-
-    console.log(e);
-
-    alert("Login failed");
-
-  }
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("rideScreen").style.display = "block";
 };
 window.addDoc = addDoc;
 window.saveRideToFirebase = async function(data) {
