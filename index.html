@@ -712,6 +712,11 @@ function showRoute() {
 }
 
 function bookRide() {
+  const bookBtn = document.getElementById("bookRideBtn");
+
+if (bookBtn.disabled) return;
+
+bookBtn.disabled = true;
   let userId = localStorage.getItem("userId");
   let name = localStorage.getItem("userName");
   let phone = localStorage.getItem("userPhone");
@@ -746,7 +751,9 @@ function bookRide() {
   ).then((docRef) => {
 
     localStorage.setItem("currentRideId", docRef.id);
-
+    
+bookBtn.innerText = "Ride Booked ✅";
+    
     window.listenRideStatus(docRef.id);
     
     document.getElementById("activeRideBox").style.display = "block";
@@ -757,6 +764,9 @@ document.getElementById("rideStatus").innerText = "Pending";
 
     console.log(e);
 
+    bookBtn.disabled = false;
+bookBtn.innerText = "Book Ride";
+    
     alert("Ride booking failed");
 
   });
