@@ -682,7 +682,7 @@ function initMap() {
 }
 
 function listenDriverLocation() {
-  const ref = doc(window.db, "drivers", "driver1");
+  const ref = window.doc(window.db, "drivers", "driver1");
 
   onSnapshot(ref, (docSnap) => {
     if (!docSnap.exists()) return;
