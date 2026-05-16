@@ -750,7 +750,7 @@ console.log("Toll Amount:", toll);
     time: new Date().toISOString()
   };
 
-  addDoc(
+  window.addDoc(
     collection(window.db, "rides"),
     rideData
 )
