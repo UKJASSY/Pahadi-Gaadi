@@ -571,6 +571,35 @@ window.onload = function () {
   
 }
 
+  function getLocation() {
+
+navigator.geolocation.getCurrentPosition(
+
+async (position) => {
+
+let lat = position.coords.latitude;
+let lng = position.coords.longitude;
+
+let response = await fetch(
+`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=YOUR_API_KEY`
+);
+
+let data = await response.json();
+
+if (data.results.length > 0) {
+document.getElementById("pickup").value =
+data.results[0].formatted_address;
+}
+
+},
+
+(error) => {
+console.log(error);
+}
+
+);
+
+}
 function initMap() {
   const defaultLocation = { lat: 28.6139, lng: 77.2090 };
 
