@@ -677,11 +677,12 @@ function initMap() {
   dropAuto.addListener("place_changed", showRoute);
 
   setTimeout(() => {
-  listenDriverLocation();
+  //listenDriverLocation();
 }, 1500);
 }
 
 function listenDriverLocation() {
+  return;
  const ref = window.doc(window.db, "drivers", "driver1");
 
   window.onSnapshot(ref, (docSnap) => {
