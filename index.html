@@ -841,12 +841,17 @@ window.getToll = async function(from, to) {
 
     return 250;
 }
-
+const firebaseConfig = {
+  apiKey: "AIzaSyAUOnQmWGHbJFl9Yy54tCvwv-wrSfiAvnc",
+  authDomain: "pahadigaadi.firebaseapp.com",
+  projectId: "pahadigaadi",
+};
   const app = initializeApp(firebaseConfig);
 window.db = getFirestore(app);
 const auth = getAuth(app);
   window.addDoc = addDoc;
-
+window.doc = doc;
+  window.onSnapshot = onSnapshot;
   window.loginUser = async function () {
 
   let name = document.getElementById("loginName").value.trim();
