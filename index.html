@@ -564,46 +564,11 @@ window.onload = function () {
   if (name && phone) {
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("rideScreen").style.display = "block";
-    
-    setTimeout(() => {
-getLocation();
-}, 2000);
-    
   }
+
   
 }
 
-  function getLocation() {
-
-navigator.geolocation.getCurrentPosition(
-
-async (position) => {
-
-  alert("Location mil gayi 😄");
-let lat = position.coords.latitude;
-let lng = position.coords.longitude;
-
-let response = await fetch(
-`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyCdQvXgtRqcUX-Vo2ngB_xL2V-cxCydmTI`
-);
-
-let data = await response.json();
-  console.log(data);
-
-if (data.results.length > 0) {
-document.getElementById("pickup").value =
-data.results[0].formatted_address;
-}
-
-},
-
-(error) => {
-alert("Location error: " + error.message);
-}
-
-);
-
-}
 function initMap() {
   const defaultLocation = { lat: 28.6139, lng: 77.2090 };
 
@@ -862,7 +827,6 @@ const auth = getAuth(app);
 window.db = getFirestore(app);
 window.addDoc = addDoc;
 window.collection = collection;
-  window.updateDoc = updateDoc;
 window.doc = doc;
 window.onSnapshot = onSnapshot;
   window.loginUser = async function () {
@@ -877,17 +841,9 @@ window.onSnapshot = onSnapshot;
 
   const userId = "user_" + phone;
 
-    let userPin = localStorage.getItem("userPin");
-
-if (!userPin) {
-  userPin = Math.floor(1000 + Math.random() * 9000).toString();
-  localStorage.setItem("userPin", userPin);
-}
   const userData = {
     name: name,
     phone: phone,
-    pin: userPin,
-  }
     createdAt: new Date().toISOString()
   };
 
@@ -983,7 +939,6 @@ document.getElementById("callDriverBtn").href =
     alert("Rating failed");
 
   }
-    }
 
 };
 </script>
