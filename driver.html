@@ -236,31 +236,7 @@ button {
 <div class="container" id="driverPanel" style="display:none;">
   <h2>🚗 Driver Panel</h2>
   <div id="rides"></div>
-  <div id="otpBox" style="display:none; margin-top:10px;">
-  <input type="number" id="ridePinInput"
-    placeholder="Enter Ride PIN"
-    style="
-      width:100%;
-      padding:12px;
-      border:none;
-      border-radius:10px;
-      margin-bottom:10px;
-    ">
-
-  <button onclick="verifyRidePin()"
-    style="
-      width:100%;
-      padding:12px;
-      border:none;
-      border-radius:10px;
-      background:#00c853;
-      color:white;
-      font-weight:bold;
-      cursor:pointer;
-    ">
-    Start Ride
-  </button>
-</div>
+ 
   <div id="map"></div>
 
 <div id="navigationPanel" style="display:none; margin-top:15px;">
@@ -319,7 +295,6 @@ import {
   getFirestore,
   collection,
   getDocs,
-  getDoc,
   onSnapshot,
   doc,
   updateDoc,
@@ -505,7 +480,6 @@ onSnapshot(q, (snapshot) => {
         driverId: driverId
       });
 
-      document.getElementById("otpBox").style.display = "block";
       localStorage.setItem("activeRideId", data.id);
 activeRideId = data.id;
       document.getElementById("map").style.display = "block";
@@ -739,61 +713,7 @@ onAuthStateChanged(auth, (user) => {
     ? "none"
     : "block";
 };
-  async function verifyRidePin() {
-
-  let enteredPin =
-    document.getElementById("ridePinInput").value;
-
-  if (!enteredPin) {
-    alert("Enter ride PIN");
-    return;
-  }
-
-  try {
-
-    let rideRef = doc(db, "rides", activeRideId);
-    let rideSnap = await getDoc(rideRef);
-
-    if (!rideSnap.exists()) {
-      alert("Ride not found");
-      return;
-    }
-
-    let rideData = rideSnap.data();
-
-    let userRef = doc(db, "users", rideData.userId);
-    let userSnap = await getDoc(userRef);
-
-    if (!userSnap.exists()) {
-      alert("User not found");
-      return;
-    }
-
-    let userData = userSnap.data();
-
-    if (enteredPin === userData.pin) {
-
-      await updateDoc(rideRef, {
-        status: "ongoing"
-      });
-
-      alert("Ride Started ✅");
-
-      document.getElementById("otpBox").style.display = "none";
-
-    } else {
-
-      alert("Wrong PIN ❌");
-
-    }
-
-  } catch (e) {
-
-    console.log(e);
-    alert("PIN verification failed");
-
-  }
-}
+  
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdQvXgtRqcUX-Vo2ngB_xL2V-cxCydmTI&libraries=places"></script>
 </body>
