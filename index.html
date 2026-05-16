@@ -828,7 +828,7 @@ query,
 orderBy
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
-async function getToll(from, to) {
+window.getToll = async function(from, to) {
 
   const response = await fetch(
     "https://apis.tollguru.com/toll/v2/origin-destination-waypoints",
