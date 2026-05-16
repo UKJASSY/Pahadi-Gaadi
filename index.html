@@ -682,7 +682,7 @@ function initMap() {
 }
 
 function listenDriverLocation() {
-  const ref = doc(db, "drivers", "driver1");
+ const ref = window.doc(db, "drivers", "driver1");
 
   window.onSnapshot(ref, (docSnap) => {
     if (!docSnap.exists()) return;
@@ -844,8 +844,8 @@ import {
   updateDoc,
   setDoc,
   serverTimestamp,
-query,
-orderBy
+  query,
+  orderBy
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -865,6 +865,7 @@ window.db = db;
 window.addDoc = addDoc;
 window.updateDoc = updateDoc;
 window.onSnapshot = onSnapshot;
+  window.doc = doc;
   window.loginUser = async function () {
 
   let name = document.getElementById("loginName").value.trim();
