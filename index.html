@@ -750,9 +750,10 @@ console.log("Toll Amount:", toll);
     time: new Date().toISOString()
   };
 
-  window.addDoc(
-    window.collection(window.db, "rides"),
+  addDoc(
+    collection(window.db, "rides"),
     rideData
+)
   ).then((docRef) => {
 
     localStorage.setItem("currentRideId", docRef.id);
