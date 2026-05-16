@@ -684,14 +684,11 @@ function initMap() {
 function listenDriverLocation() {
   const ref = doc(db, "drivers", "driver1");
 
-  window.onSnapshot(ref, (docSnap) => {
+  onSnapshot(ref, (docSnap) => {
     if (!docSnap.exists()) return;
 
     const data = docSnap.data();
-    const driverPos = {
-      lat: data.lat,
-      lng: data.lng
-    };
+    const driverPos = { lat: data.lat, lng: data.lng };
 
     if (!driverMarker) {
       driverMarker = new google.maps.Marker({
