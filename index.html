@@ -776,7 +776,7 @@ function bookRide() {
   };
 
   window.addDoc(
-    window.collection(window.db, "rides"),
+    collection(db, "rides"),
     rideData
   ).then((docRef) => {
 
