@@ -745,7 +745,23 @@ if (km > 60) {
 
 }
 
-let price = cityPrice + hillPrice + toll;
+let returnSupport = 0;
+
+if (km > 80) {
+
+  returnSupport = km * 2;
+
+}
+
+let price =
+
+cityPrice +
+
+hillPrice +
+
+toll +
+
+returnSupport;
 
 console.log("City KM:", cityKm);
 
