@@ -754,7 +754,7 @@ console.log("Toll Amount:", toll);
     collection(window.db, "rides"),
     rideData
 )
-  ).then((docRef) => {
+  .then((docRef) => {
 
     localStorage.setItem("currentRideId", docRef.id);
     
