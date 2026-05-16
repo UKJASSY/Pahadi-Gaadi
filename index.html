@@ -389,7 +389,7 @@ header button{
     <input type="tel" id="loginPhone" placeholder="📞 Phone Number">
   </div>
 
-  <button class="book-btn" onclick="loginUser()">
+  <button class="book-btn" id="loginBtn()">
     Continue
   </button>
 </div>
@@ -984,6 +984,8 @@ document.getElementById("callDriverBtn").href =
 
   }
 
+    document.getElementById("loginBtn")
+  .addEventListener("click", loginUser);
 };
 </script>
 
