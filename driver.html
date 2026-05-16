@@ -236,7 +236,6 @@ button {
 <div class="container" id="driverPanel" style="display:none;">
   <h2>🚗 Driver Panel</h2>
   <div id="rides"></div>
- 
   <div id="map"></div>
 
 <div id="navigationPanel" style="display:none; margin-top:15px;">
@@ -294,7 +293,6 @@ import {
 import {
   getFirestore,
   collection,
-  getDocs,
   onSnapshot,
   doc,
   updateDoc,
@@ -713,7 +711,6 @@ onAuthStateChanged(auth, (user) => {
     ? "none"
     : "block";
 };
-  
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdQvXgtRqcUX-Vo2ngB_xL2V-cxCydmTI&libraries=places"></script>
 </body>
