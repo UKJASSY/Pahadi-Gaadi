@@ -236,6 +236,31 @@ button {
 <div class="container" id="driverPanel" style="display:none;">
   <h2>🚗 Driver Panel</h2>
   <div id="rides"></div>
+  <div id="otpBox" style="display:none; margin-top:10px;">
+  <input type="number" id="ridePinInput"
+    placeholder="Enter Ride PIN"
+    style="
+      width:100%;
+      padding:12px;
+      border:none;
+      border-radius:10px;
+      margin-bottom:10px;
+    ">
+
+  <button onclick="verifyRidePin()"
+    style="
+      width:100%;
+      padding:12px;
+      border:none;
+      border-radius:10px;
+      background:#00c853;
+      color:white;
+      font-weight:bold;
+      cursor:pointer;
+    ">
+    Start Ride
+  </button>
+</div>
   <div id="map"></div>
 
 <div id="navigationPanel" style="display:none; margin-top:15px;">
