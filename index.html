@@ -691,7 +691,7 @@ function showRoute() {
 
     if (status === "OK") {
       directionsRenderer.setDirections(result);
-
+console.log(result.routes[0].warnings);
       let leg = result.routes[0].legs[0];
 
       pickupLat = leg.start_location.lat();
