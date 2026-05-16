@@ -698,15 +698,73 @@ console.log(result.routes[0].warnings);
       pickupLng = leg.start_location.lng();
 
       let km = (leg.distance.value / 1000).toFixed(2);
+      let cityKm = km;
+let hillKm = 0;
+      const hillZones = [
+  "Mussoorie",
+  "Nainital",
+  "Joshimath",
+  "Chamoli",
+  "Pauri",
+  "Tehri"
+];
+
+let routeText =
+  pickup.toLowerCase() + " " +
+  drop.toLowerCase();
+
+hillZones.forEach(zone => {
+
+  if (routeText.includes(zone.toLowerCase())) {
+
+    hillKm = km * 0.7;
+    cityKm = km * 0.3;
+
+  }
+
+});
 
       let rate = selectedVehicle === "Bike" ? 3.5 :
                  selectedVehicle === "Car" ? 5 :
                  selectedVehicle === "SUV" ? 8 : 0;
 
-      let price = km * rate;
+let hillKm = km * 0.7;
 
-      document.getElementById("distance").innerText = km;
-      document.getElementById("price").innerText = Math.round(price);
+let cityKm = km - hillKm;
+
+let cityRate = rate;
+
+let hillRate = rate + 2;
+
+let cityPrice = cityKm * cityRate;
+
+let hillPrice = hillKm * hillRate;
+
+let toll = 0;
+
+if (km > 60) {
+
+  toll = 120;
+
+}
+
+let price = cityPrice + hillPrice + toll;
+
+console.log("City KM:", cityKm);
+
+console.log("Hill KM:", hillKm);
+
+console.log("City Fare:", cityPrice);
+
+console.log("Hill Fare:", hillPrice);
+
+console.log("Toll:", toll);
+
+console.log("Total Fare:", price);
+
+document.getElementById("distance").innerText = km;
+
+document.getElementById("price").innerText = Math.round(price);
     }
   });
 }
