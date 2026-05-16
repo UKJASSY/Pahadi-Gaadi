@@ -731,7 +731,15 @@ hillZones.forEach(zone => {
 
 let cityRate = rate;
 
-let hillRate = rate + 2;
+let hillRate =
+
+selectedVehicle === "Bike" ? rate + 1.5 :
+
+selectedVehicle === "Car" ? rate + 4 :
+
+selectedVehicle === "SUV" ? rate + 6 :
+
+rate;
 
 let cityPrice = cityKm * cityRate;
 
