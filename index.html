@@ -565,7 +565,9 @@ window.onload = function () {
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("rideScreen").style.display = "block";
     
-    getLocation();
+    setTimeout(() => {
+getLocation();
+}, 2000);
     
   }
   
