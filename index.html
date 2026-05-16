@@ -808,7 +808,7 @@ document.getElementById("rideStatus").innerText = "Pending";
   try {
 
     await window.updateDoc(
-      window.doc(window.db, "rides", rideId),
+      doc(db, "rides", rideId),
       {
         status: "cancelled"
       }
