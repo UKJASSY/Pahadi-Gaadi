@@ -682,7 +682,7 @@ function initMap() {
 }
 
 function listenDriverLocation() {
-  const ref = window.doc(window.db, "drivers", "driver1");
+  const ref = doc(db, "drivers", "driver1");
 
   window.onSnapshot(ref, (docSnap) => {
     if (!docSnap.exists()) return;
@@ -862,8 +862,6 @@ const auth = getAuth(app);
 const db = getFirestore(app);
   
 window.db = db;
-  window.doc = doc;
-window.collection = collection;
 window.addDoc = addDoc;
 window.updateDoc = updateDoc;
 window.onSnapshot = onSnapshot;
