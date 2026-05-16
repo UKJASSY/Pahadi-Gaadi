@@ -830,44 +830,16 @@ orderBy
 
 window.getToll = async function(from, to) {
 
-  const response = await fetch(
-    "https://apis.tollguru.com/toll/v2/origin-destination-waypoints",
-    {
-      method: "POST",
+    let km = parseFloat(document.getElementById("distance").innerText) || 0;
 
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": "tg_5A5FD0FDE0A841DC8614AA7EA6467C5A"
-      },
+    if (km < 50) return 0;
 
-      body: JSON.stringify({
-        from: {
-          address: from
-        },
+    if (km < 100) return 80;
 
-        to: {
-          address: to
-        },
+    if (km < 200) return 150;
 
-        vehicle: {
-          type: "2AxlesAuto"
-        }
-      })
-    }
-  );
-
-  const data = await response.json();
-
-  console.log("TOLL DATA:", data);
-
-  return data.route?.costs?.tag || 0;
+    return 250;
 }
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAUOnQmWGHbJFl9Yy54tCvwv-wrSfiAvnc",
-  authDomain: "pahadigaadi.firebaseapp.com",
-  projectId: "pahadigaadi",
-};
 
   const app = initializeApp(firebaseConfig);
 
