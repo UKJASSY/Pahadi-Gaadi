@@ -874,12 +874,6 @@ window.onSnapshot = onSnapshot;
 
   const userId = "user_" + phone;
 
-    let userPin = localStorage.getItem("userPin");
-
-if (!userPin) {
-  userPin = Math.floor(1000 + Math.random() * 9000).toString();
-  localStorage.setItem("userPin", userPin);
-}
   const userData = {
     name: name,
     phone: phone,
