@@ -678,11 +678,21 @@ function initMap() {
 });
   driverDirectionsRenderer.setMap(map);
 
-  const pickupAuto = new google.maps.places.Autocomplete(document.getElementById("pickup"));
-  const dropAuto = new google.maps.places.Autocomplete(document.getElementById("drop"));
+  const pickupAuto = new google.maps.places.Autocomplete(
+document.getElementById("pickup")
+);
 
-  pickupAuto.addListener("place_changed", showRoute);
-  dropAuto.addListener("place_changed", showRoute);
+const dropAuto = new google.maps.places.Autocomplete(
+document.getElementById("drop")
+);
+
+pickupAuto.setFields(["place_id", "geometry", "formatted_address"]);
+
+dropAuto.setFields(["place_id", "geometry", "formatted_address"]);
+
+pickupAuto.addListener("place_changed", showRoute);
+
+dropAuto.addListener("place_changed", showRoute);
 
   setTimeout(() => {
   listenDriverLocation();
