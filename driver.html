@@ -255,11 +255,21 @@ button {
   Start Ride
 </button>
 
-<button class="accept" onclick="openGoogleNav()">
+<button
+  id="navBtn"
+  class="accept"
+  onclick="openGoogleNav()"
+  style="display:none;"
+>
   Open Google Navigation
 </button>
 
-<button class="end" onclick="completeRide()">
+<button
+  id="completeBtn"
+  class="end"
+  onclick="completeRide()"
+  style="display:none;"
+>
   Complete Ride
 </button>
 </div>
@@ -610,7 +620,15 @@ directionsService.route({
     // 🔥 Button text change
     document.querySelector(".start").innerText =
       "Ride Started";
- 
+
+    document.querySelector(".start").style.display = "none";
+
+document.getElementById("navBtn").style.display =
+  "block";
+
+document.getElementById("completeBtn").style.display =
+  "block";
+    
     alert("Ride Started 🚗");
  
   }catch(e){
