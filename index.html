@@ -724,8 +724,8 @@ console.log(result.routes[0].warnings);
       pickupLng = leg.start_location.lng();
 
       let km = (leg.distance.value / 1000).toFixed(2);
-      let cityKm = km;
-let hillKm = 0;
+      let cityKm = Number(km);
+let hillKm = Number(0);
       
 const hillZones = [
 
