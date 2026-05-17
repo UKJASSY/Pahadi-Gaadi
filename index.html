@@ -437,16 +437,13 @@ margin-right:10px;
 
 <div class="container">
 
- <div class="input-box">
-    <input
-        type="text"
-        id="pickup"
-        placeholder="📍 Detecting your location..."
-        readonly
-    >
-</div>
   <div class="input-box">
-    <input type="text" id="drop" placeholder="🏁 Where are you going?">
+    <input type="text" id="pickup" placeholder="📍 Pickup Location">
+    <button class="loc-btn" onclick="getLocation()">📍</button>
+  </div>
+
+  <div class="input-box">
+    <input type="text" id="drop" placeholder="🏁 Drop Location">
   </div>
 
   <div class="vehicle-box">
@@ -678,21 +675,11 @@ function initMap() {
 });
   driverDirectionsRenderer.setMap(map);
 
-  const pickupAuto = new google.maps.places.Autocomplete(
-document.getElementById("pickup")
-);
+  const pickupAuto = new google.maps.places.Autocomplete(document.getElementById("pickup"));
+  const dropAuto = new google.maps.places.Autocomplete(document.getElementById("drop"));
 
-const dropAuto = new google.maps.places.Autocomplete(
-document.getElementById("drop")
-);
-
-pickupAuto.setFields(["place_id", "geometry", "formatted_address"]);
-
-dropAuto.setFields(["place_id", "geometry", "formatted_address"]);
-
-pickupAuto.addListener("place_changed", showRoute);
-
-dropAuto.addListener("place_changed", showRoute);
+  pickupAuto.addListener("place_changed", showRoute);
+  dropAuto.addListener("place_changed", showRoute);
 
   setTimeout(() => {
   listenDriverLocation();
@@ -1194,9 +1181,6 @@ console.log("Toll Amount:", toll);
 
   let km = parseFloat(document.getElementById("distance").innerText) || 0;
 
-  const dropLat = destinationLocation.lat();
-const dropLng = destinationLocation.lng();
-  
   let rideData = {
     userId,
     name,
@@ -1210,9 +1194,6 @@ const dropLng = destinationLocation.lng();
     driverId: null,
     pickupLat: pickupLat,
     pickupLng: pickupLng,
-    dropLat: dropLat,
-dropLng: dropLng,
-    
     time: new Date().toISOString()
   };
 
@@ -1433,7 +1414,6 @@ document.getElementById("callDriverBtn").href =
 
 };
   window.onload = () => {
-    getLocation();
 
   const savedUser =
   localStorage.getItem("userId");
@@ -1451,50 +1431,6 @@ document.getElementById("callDriverBtn").href =
   }
 
 };
-
-
-
-function getLocation() {
-
-    if (navigator.geolocation) {
-
-        navigator.geolocation.getCurrentPosition(
-
-            async function(position) {
-
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-
-                try {
-
-                    const response = await fetch(
-                        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyCdQvXgtRqcUX-Vo2ngB_xL2V-cxCydmTI`
-                    );
-
-                    const data = await response.json();
-                  console.log(data);
-
-                    if (data.results.length > 0) {
-
-                    document.getElementById("pickup").value =
-lat + ", " + lng;
-
-                    }
-
-                } catch (error) {
-
-                    console.log(error);
-
-                }
-
-            }
-
-        );
-
-    }
-
-}
-
 </script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdQvXgtRqcUX-Vo2ngB_xL2V-cxCydmTI&libraries=places&callback=initMap" async defer></script>
