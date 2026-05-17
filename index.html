@@ -437,13 +437,16 @@ margin-right:10px;
 
 <div class="container">
 
+ <div class="input-box">
+    <input
+        type="text"
+        id="pickup"
+        placeholder="📍 Detecting your location..."
+        readonly
+    >
+</div>
   <div class="input-box">
-    <input type="text" id="pickup" placeholder="📍 Pickup Location">
-    <button class="loc-btn" onclick="getLocation()">📍</button>
-  </div>
-
-  <div class="input-box">
-    <input type="text" id="drop" placeholder="🏁 Drop Location">
+    <input type="text" id="drop" placeholder="🏁 Where are you going?">
   </div>
 
   <div class="vehicle-box">
@@ -1431,6 +1434,52 @@ document.getElementById("callDriverBtn").href =
   }
 
 };
+  <script>
+
+window.onload = function () {
+    getLocation();
+};
+
+function getLocation() {
+
+    if (navigator.geolocation) {
+
+        navigator.geolocation.getCurrentPosition(
+
+            async function(position) {
+
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+
+                try {
+
+                    const response = await fetch(
+                        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyCdQvXgtRqcUX-Vo2ngB_xL2V-cxCydmTI`
+                    );
+
+                    const data = await response.json();
+
+                    if (data.results.length > 0) {
+
+                        document.getElementById("pickup").value =
+                            data.results[0].formatted_address;
+
+                    }
+
+                } catch (error) {
+
+                    console.log(error);
+
+                }
+
+            }
+
+        );
+
+    }
+
+}
+
 </script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdQvXgtRqcUX-Vo2ngB_xL2V-cxCydmTI&libraries=places&callback=initMap" async defer></script>
