@@ -999,22 +999,19 @@ hillZones.forEach(zone => {
 
 });
 
-      let rate = selectedVehicle === "Bike" ? 3.5 :
-                 selectedVehicle === "Car" ? 5 :
-                 selectedVehicle === "SUV" ? 8 : 0;
+let cityRate =
+selectedVehicle === "Bike" ? 5 :
 
+selectedVehicle === "Car" ? 8 :
 
-let cityRate = rate;
+selectedVehicle === "SUV" ? 12 : 0;
 
 let hillRate =
+selectedVehicle === "Bike" ? 9 :
 
-selectedVehicle === "Bike" ? rate + 1.5 :
+selectedVehicle === "Car" ? 14 :
 
-selectedVehicle === "Car" ? rate + 4 :
-
-selectedVehicle === "SUV" ? rate + 6 :
-
-rate;
+selectedVehicle === "SUV" ? 20 : 0;
 
 let cityPrice = cityKm * cityRate;
 
