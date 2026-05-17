@@ -1417,6 +1417,7 @@ document.getElementById("callDriverBtn").href =
 
 };
   window.onload = () => {
+    getLocation();
 
   const savedUser =
   localStorage.getItem("userId");
@@ -1435,9 +1436,7 @@ document.getElementById("callDriverBtn").href =
 
 };
 
-window.onload = function () {
-    getLocation();
-};
+
 
 function getLocation() {
 
