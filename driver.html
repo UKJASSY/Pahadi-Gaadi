@@ -251,13 +251,17 @@ button {
 
     <p id="navStatus">Driver heading to pickup...</p>
 
-    <button class="start" onclick="startRide()">
-      Start Ride
-    </button>
+   <button class="start" onclick="startRide()">
+  Start Ride
+</button>
 
-    <button class="end" onclick="completeRide()">
-      Complete Ride
-    </button>
+<button class="accept" onclick="openGoogleNav()">
+  Open Google Navigation
+</button>
+
+<button class="end" onclick="completeRide()">
+  Complete Ride
+</button>
 </div>
 </div>
 <div id="chatPopup">
@@ -576,10 +580,29 @@ const rideSnapshot = await getDoc(doc(db, "rides", activeRideId));
 
 const rideData = rideSnapshot.data();
 
-window.open(
-  `https://www.google.com/maps/dir/?api=1&destination=${rideData.dropLat},${rideData.dropLng}&travelmode=driving`,
-  "_blank"
-);
+directionsService.route({
+
+  origin: {
+    lat: driverLat,
+    lng: driverLng
+  },
+
+  destination: {
+    lat: rideData.dropLat,
+    lng: rideData.dropLng
+  },
+
+  travelMode: "DRIVING"
+
+}, (result, status) => {
+
+  if(status === "OK"){
+
+    directionsRenderer.setDirections(result);
+
+  }
+
+});
  
     document.getElementById("navStatus").innerText =
       "Ride Started";
@@ -623,6 +646,21 @@ window.completeRide = async function () {
  
   }
  
+};
+  window.openGoogleNav = async function () {
+
+  if(!activeRideId) return;
+
+  const rideSnapshot =
+    await getDoc(doc(db, "rides", activeRideId));
+
+  const rideData = rideSnapshot.data();
+
+  window.open(
+    `https://www.google.com/maps/dir/?api=1&destination=${rideData.dropLat},${rideData.dropLng}&travelmode=driving`,
+    "_blank"
+  );
+
 };
   window.recaptchaVerifier = new RecaptchaVerifier(
   auth,
