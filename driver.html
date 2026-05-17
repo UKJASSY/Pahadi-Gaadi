@@ -175,6 +175,20 @@ button {
   0 0 20px rgba(59,130,246,0.25);
 
 }
+  #logoutBtn{
+  position:absolute;
+  top:20px;
+  right:20px;
+  width:auto;
+  padding:10px 18px;
+  border:none;
+  border-radius:14px;
+  background:rgba(239,68,68,0.9);
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  box-shadow:0 0 15px rgba(239,68,68,0.4);
+}
 
 .accept {
   background:
@@ -329,7 +343,12 @@ button {
     <img src="logo.png">
     <span>Gaadi</span>
   </div>
-  <div class="sub">Driver</div>
+ <div class="sub">Driver</div>
+
+<button id="logoutBtn">
+Logout
+</button>
+
 </div>
 <div id="loginBox" class="container">
 
@@ -443,7 +462,8 @@ import {
   getAuth,
   RecaptchaVerifier,
   signInWithPhoneNumber,
-  onAuthStateChanged
+  onAuthStateChanged,
+  signOut
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 import {
   getFirestore,
@@ -943,6 +963,16 @@ onAuthStateChanged(auth, (user) => {
     popup.style.display === "block"
     ? "none"
     : "block";
+};
+  document.getElementById("logoutBtn").onclick =
+async () => {
+
+  await signOut(auth);
+
+  localStorage.clear();
+
+  location.reload();
+
 };
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdQvXgtRqcUX-Vo2ngB_xL2V-cxCydmTI&libraries=places"></script>
