@@ -1117,6 +1117,33 @@ line-height: 28px;
 `;
 
 document.getElementById("price").innerText = Math.round(price);
+      
+      let bikeFare =
+(cityKm * 5) +
+(hillKm * 9) +
+toll +
+returnSupport;
+
+let carFare =
+(cityKm * 8) +
+(hillKm * 14) +
+toll +
+returnSupport;
+
+let suvFare =
+(cityKm * 12) +
+(hillKm * 20) +
+toll +
+returnSupport;
+
+document.getElementById("bikeFare").innerText =
+"₹" + Math.round(bikeFare);
+
+document.getElementById("carFare").innerText =
+"₹" + Math.round(carFare);
+
+document.getElementById("suvFare").innerText =
+"₹" + Math.round(suvFare);
     }
   });
 }
