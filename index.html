@@ -403,6 +403,18 @@ header button{
     <span class="slide-right">Gaadi</span>
   </div>
   <div style="position:absolute; top:20px; right:20px;">
+    <button onclick="toggleProfile()" style="
+background:#1e3a8a;
+color:white;
+border:none;
+padding:6px 12px;
+border-radius:20px;
+font-size:12px;
+cursor:pointer;
+margin-right:10px;
+">
+👤 Profile
+</button>
   <button onclick="logoutUser()" style="
     background:#dc2626;
     color:white;
@@ -414,6 +426,34 @@ header button{
   ">
     Logout
   </button>
+</div>
+  <div id="profileBox" style="
+display:none;
+position:absolute;
+top:70px;
+right:20px;
+background:rgba(15,23,42,0.95);
+padding:15px;
+border-radius:18px;
+color:white;
+width:220px;
+backdrop-filter:blur(10px);
+box-shadow:0 0 20px rgba(0,150,255,0.4);
+z-index:999;
+">
+
+<h3>👤 User Profile</h3>
+
+<p>
+<b>Name:</b>
+<span id="profileName"></span>
+</p>
+
+<p>
+<b>Phone:</b>
+<span id="profilePhone"></span>
+</p>
+
 </div>
 </header>
 
@@ -1417,6 +1457,30 @@ document.getElementById("callDriverBtn").href =
   }
 
 };
+  function toggleProfile(){
+
+  const box =
+  document.getElementById("profileBox");
+
+  if(box.style.display === "block"){
+
+    box.style.display = "none";
+
+  } else {
+
+    document.getElementById(
+      "profileName"
+    ).innerText =
+    localStorage.getItem("userName");
+
+    document.getElementById(
+      "profilePhone"
+    ).innerText =
+    localStorage.getItem("userPhone");
+
+    box.style.display = "block";
+  }
+}
 </script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdQvXgtRqcUX-Vo2ngB_xL2V-cxCydmTI&libraries=places&callback=initMap" async defer></script>
