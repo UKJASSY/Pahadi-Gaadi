@@ -457,6 +457,7 @@ header button{
 <div class="bottom-sheet">
   Distance: <span id="distance">0</span> km <br>
   Fare: ₹<span id="price" class="price">0</span>
+  <div id="fareDetails"></div>
 </div>
 
 <div style="text-align:center; margin-top:10px;">
@@ -1058,6 +1059,40 @@ console.log("Toll:", toll);
 console.log("Total Fare:", price);
 
 document.getElementById("distance").innerText = km;
+      document.getElementById("fareDetails").innerHTML = `
+<div style="
+background: rgba(255,255,255,0.06);
+padding: 12px;
+border-radius: 14px;
+margin-top: 10px;
+font-size: 14px;
+line-height: 28px;
+">
+
+<div>🛣️ Total Distance: <b>${km} KM</b></div>
+
+<div>🏙️ City Distance: <b>${cityKm.toFixed(1)} KM</b></div>
+
+<div>⛰️ Hill Distance: <b>${hillKm.toFixed(1)} KM</b></div>
+
+<hr style="border-color: rgba(255,255,255,0.1);">
+
+<div>🏙️ City Fare: <b>₹${Math.round(cityPrice)}</b></div>
+
+<div>⛰️ Hill Fare: <b>₹${Math.round(hillPrice)}</b></div>
+
+<div>🛣️ Toll Charge: <b>₹${toll}</b></div>
+
+<div>↩️ Return Support: <b>₹${returnSupport}</b></div>
+
+<hr style="border-color: rgba(255,255,255,0.1);">
+
+<div style="font-size:18px;">
+💰 Total Fare: <b>₹${Math.round(price)}</b>
+</div>
+
+</div>
+`;
 
 document.getElementById("price").innerText = Math.round(price);
     }
