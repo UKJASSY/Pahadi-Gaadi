@@ -499,6 +499,30 @@ activeRideId = data.id;
 
 document.getElementById("navigationPanel").style.display = "block";
 
+      if(data.rideStarted){
+
+  document.getElementById("startBtn").style.display =
+    "none";
+
+  document.getElementById("navBtn").style.display =
+    "block";
+
+  document.getElementById("completeBtn").style.display =
+    "block";
+
+}else{
+
+  document.getElementById("startBtn").style.display =
+    "block";
+
+  document.getElementById("navBtn").style.display =
+    "none";
+
+  document.getElementById("completeBtn").style.display =
+    "none";
+
+}
+
 initMap();
 
 directionsService.route({
@@ -582,8 +606,9 @@ window.startRide = async function () {
  
   try{
  
-   await updateDoc(doc(db, "rides", activeRideId), {
-  status: "ongoing"
+  await updateDoc(doc(db, "rides", activeRideId), {
+  status: "ongoing",
+  rideStarted: true
 });
 
 const rideSnapshot = await getDoc(doc(db, "rides", activeRideId));
