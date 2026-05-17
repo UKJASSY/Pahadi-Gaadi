@@ -1194,6 +1194,9 @@ console.log("Toll Amount:", toll);
 
   let km = parseFloat(document.getElementById("distance").innerText) || 0;
 
+  const dropLat = destinationLocation.lat();
+const dropLng = destinationLocation.lng();
+  
   let rideData = {
     userId,
     name,
@@ -1207,6 +1210,9 @@ console.log("Toll Amount:", toll);
     driverId: null,
     pickupLat: pickupLat,
     pickupLng: pickupLng,
+    dropLat: dropLat,
+dropLng: dropLng,
+    
     time: new Date().toISOString()
   };
 
