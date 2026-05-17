@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PahadiGaadi Profile</title>
+
+<style>
+
+body{
+
+margin:0;
+font-family:Arial,sans-serif;
+
+background:
+linear-gradient(
+rgba(2,6,23,0.90),
+rgba(2,6,23,0.95)
+),
+url('bg.jpg.jpeg');
+
+background-size:cover;
+background-position:center;
+min-height:100vh;
+color:white;
+
+}
+
+.header{
+
+text-align:center;
+padding:25px;
+font-size:32px;
+font-weight:800;
+
+text-shadow:
+0 0 15px rgba(59,130,246,0.6);
+
+}
+
+.profileCard{
+
+width:90%;
+max-width:420px;
+margin:20px auto;
+
+background:
+rgba(15,23,42,0.82);
+
+border:
+1px solid rgba(255,255,255,0.08);
+
+border-radius:28px;
+
+padding:25px;
+
+backdrop-filter:blur(18px);
+
+box-shadow:
+0 0 30px rgba(59,130,246,0.18),
+0 0 60px rgba(34,197,94,0.08);
+
+}
+
+.profilePhoto{
+
+width:110px;
+height:110px;
+border-radius:50%;
+
+background:
+linear-gradient(135deg,#2563eb,#22c55e);
+
+margin:auto;
+
+font-size:42px;
+font-weight:bold;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+box-shadow:
+0 0 25px rgba(59,130,246,0.35);
+
+}
+
+.info{
+
+margin-top:25px;
+font-size:17px;
+line-height:2;
+
+}
+
+button{
+
+width:100%;
+padding:14px;
+margin-top:14px;
+
+border:none;
+border-radius:18px;
+
+font-size:16px;
+font-weight:700;
+
+cursor:pointer;
+color:white;
+
+}
+
+.editBtn{
+
+background:
+linear-gradient(135deg,#2563eb,#1d4ed8);
+
+}
+
+.homeBtn{
+
+background:
+linear-gradient(135deg,#22c55e,#16a34a);
+
+}
+
+.logoutBtn{
+
+background:
+linear-gradient(135deg,#ef4444,#dc2626);
+
+}
+
+</style>
+</head>
+<body>
+
+<div class="header">
+🏔️ 👤 Pahadi Profile 👤 🏔️
+</div>
+
+<div class="profileCard">
+
+<div class="profilePhoto" id="profileInitial">
+U
+</div>
+
+<div class="info">
+
+<div>
+<b>Name:</b>
+<span id="profileName"></span>
+</div>
+
+<div>
+<b>Phone:</b>
+<span id="profilePhone"></span>
+</div>
+
+<div>
+<b>Address:</b>
+<span id="profileAddress"></span>
+</div>
+
+</div>
+
+<button class="editBtn" onclick="editProfile()">
+✏️ Edit Profile
+</button>
+
+<button class="homeBtn" onclick="window.location.href='index.html'">
+🏠 Back To Home
+</button>
+
+<button class="logoutBtn" onclick="logoutUser()">
+🚪 Logout
+</button>
+
+</div>
+
+<script>
+
+const userName =
+localStorage.getItem("userName") || "User";
+
+const userPhone =
+localStorage.getItem("userPhone") || "Not Available";
+
+const userAddress =
+localStorage.getItem("userAddress") || "Not Added";
+
+
+document.getElementById("profileName").innerText = userName;
+
+document.getElementById("profilePhone").innerText = userPhone;
+
+document.getElementById("profileAddress").innerText = userAddress;
+
+
+document.getElementById("profileInitial").innerText =
+userName.charAt(0).toUpperCase();
+
+
+function editProfile(){
+
+let newName = prompt(
+"Enter Name",
+localStorage.getItem("userName")
+);
+
+let newAddress = prompt(
+"Enter Address",
+localStorage.getItem("userAddress") || ""
+);
+
+if(newName){
+
+localStorage.setItem(
+"userName",
+newName
+);
+
+}
+
+if(newAddress){
+
+localStorage.setItem(
+"userAddress",
+newAddress
+);
+
+}
+
+alert("Profile Updated ✅");
+
+location.reload();
+
+}
+
+
+function logoutUser(){
+
+localStorage.clear();
+
+window.location.href = 'index.html';
+
+}
+
+</script>
+</body>
+</html>
