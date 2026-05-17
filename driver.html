@@ -251,7 +251,7 @@ button {
 
     <p id="navStatus">Driver heading to pickup...</p>
 
-   <button class="start" onclick="startRide()">
+  <button id="startBtn" class="start" onclick="startRide()">
   Start Ride
 </button>
 
@@ -621,7 +621,7 @@ directionsService.route({
     document.querySelector(".start").innerText =
       "Ride Started";
 
-    document.querySelector(".start").style.display = "none";
+    document.getElementById("startBtn").style.display = "none";
 
 document.getElementById("navBtn").style.display =
   "block";
