@@ -761,10 +761,10 @@ directionsService.route({
     lat: driverLat,
     lng: driverLng
   },
-  destination: {
-    lat: data.pickupLat,
-    lng: data.pickupLng
-  },
+destination: {
+   lat: data.dropLat,
+   lng: data.dropLng
+},
   travelMode: "DRIVING"
 
 }, (result, status) => {
