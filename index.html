@@ -452,7 +452,23 @@ z-index:999;
 <p>
 <b>Phone:</b>
 <span id="profilePhone"></span>
+<p>
+<b>Address:</b>
+<span id="profileAddress"></span>
 </p>
+
+<button onclick="editProfile()" style="
+margin-top:10px;
+background:#2563eb;
+border:none;
+padding:10px;
+border-radius:12px;
+color:white;
+cursor:pointer;
+width:100%;
+">
+✏️ Edit Profile
+</button>
 
 </div>
 </header>
@@ -1477,9 +1493,49 @@ document.getElementById("callDriverBtn").href =
       "profilePhone"
     ).innerText =
     localStorage.getItem("userPhone");
+    
+    document.getElementById(
+"profileAddress"
+).innerText =
+localStorage.getItem("userAddress") || "Not added";
 
     box.style.display = "block";
   }
+};
+  window.editProfile = function() {
+
+  let newName = prompt(
+    "Enter Name",
+    localStorage.getItem("userName")
+  );
+
+  let newAddress = prompt(
+    "Enter Address",
+    localStorage.getItem("userAddress") || ""
+  );
+
+  if(newName){
+
+    localStorage.setItem(
+      "userName",
+      newName
+    );
+
+  }
+
+  if(newAddress){
+
+    localStorage.setItem(
+      "userAddress",
+      newAddress
+    );
+
+  }
+
+  alert("Profile Updated ✅");
+
+  toggleProfile();
+
 };
 </script>
 
