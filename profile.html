@@ -62,26 +62,45 @@ box-shadow:
 
 }
 
-.profilePhoto{
+.profilePhotoContainer{
 
-width:110px;
-height:110px;
+text-align:center;
+
+}
+
+#profileImage{
+
+width:120px;
+height:120px;
+
 border-radius:50%;
 
-background:
-linear-gradient(135deg,#2563eb,#22c55e);
+object-fit:cover;
 
-margin:auto;
-
-font-size:42px;
-font-weight:bold;
-
-display:flex;
-align-items:center;
-justify-content:center;
+border:4px solid #3b82f6;
 
 box-shadow:
-0 0 25px rgba(59,130,246,0.35);
+0 0 25px rgba(59,130,246,0.4);
+
+}
+
+.uploadBtn{
+
+margin-top:15px;
+
+background:
+linear-gradient(135deg,#2563eb,#1d4ed8);
+
+padding:10px 16px;
+
+border:none;
+border-radius:14px;
+
+color:white;
+
+font-weight:700;
+
+cursor:pointer;
 
 }
 
@@ -141,8 +160,28 @@ linear-gradient(135deg,#ef4444,#dc2626);
 
 <div class="profileCard">
 
-<div class="profilePhoto" id="profileInitial">
-U
+<div class="profilePhotoContainer">
+
+<img
+id="profileImage"
+src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+>
+
+<input
+type="file"
+id="imageInput"
+accept="image/*"
+style="display:none"
+onchange="changeProfilePhoto(event)"
+>
+
+<button
+class="uploadBtn"
+onclick="document.getElementById('imageInput').click()"
+>
+📷 Change Photo
+</button>
+
 </div>
 
 <div class="info">
@@ -246,6 +285,41 @@ window.location.href = 'index.html';
 
 }
 
+ const savedImage =
+localStorage.getItem("profileImage");
+
+if(savedImage){
+
+document.getElementById(
+"profileImage"
+).src = savedImage;
+
+}
+
+function changeProfilePhoto(event){
+
+const file = event.target.files[0];
+
+if(!file) return;
+
+const reader = new FileReader();
+
+reader.onload = function(e){
+
+localStorage.setItem(
+"profileImage",
+e.target.result
+);
+
+document.getElementById(
+"profileImage"
+).src = e.target.result;
+
+};
+
+reader.readAsDataURL(file);
+
+} 
 </script>
 </body>
 </html>
