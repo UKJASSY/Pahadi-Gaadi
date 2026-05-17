@@ -433,10 +433,35 @@ header button{
   </div>
 
   <div class="vehicle-box">
-    <div class="vehicle" onclick="selectVehicle(this,'Bike')">🏍 Bike</div>
-    <div class="vehicle" onclick="selectVehicle(this,'Car')">🚗 Car</div>
-    <div class="vehicle" onclick="selectVehicle(this,'SUV')">🚙 SUV</div>
-  </div>
+    <div class="vehicle" onclick="selectVehicle(this,'Bike')">
+
+<div>🏍 Bike</div>
+
+<div id="bikeFare" style="margin-top:6px;font-size:14px;font-weight:bold;">
+₹0
+</div>
+
+</div>
+
+<div class="vehicle" onclick="selectVehicle(this,'Car')">
+
+<div>🚗 Car</div>
+
+<div id="carFare" style="margin-top:6px;font-size:14px;font-weight:bold;">
+₹0
+</div>
+
+</div>
+
+<div class="vehicle" onclick="selectVehicle(this,'SUV')">
+
+<div>🚙 SUV</div>
+
+<div id="suvFare" style="margin-top:6px;font-size:14px;font-weight:bold;">
+₹0
+</div>
+
+</div>
 
   <button id="bookRideBtn" class="book-btn" onclick="bookRide()">Book Ride</button>
 </div>
