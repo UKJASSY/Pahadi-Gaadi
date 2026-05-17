@@ -1399,6 +1399,24 @@ document.getElementById("callDriverBtn").href =
   }
 
 };
+  window.onload = () => {
+
+  const savedUser =
+  localStorage.getItem("userId");
+
+  if(savedUser){
+
+    document.getElementById(
+      "loginScreen"
+    ).style.display = "none";
+
+    document.getElementById(
+      "rideScreen"
+    ).style.display = "block";
+
+  }
+
+};
 </script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdQvXgtRqcUX-Vo2ngB_xL2V-cxCydmTI&libraries=places&callback=initMap" async defer></script>
