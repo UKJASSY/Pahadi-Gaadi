@@ -296,6 +296,7 @@ import {
   onSnapshot,
   doc,
   updateDoc,
+  getDoc,
   query,
   where,
   increment,
@@ -567,9 +568,18 @@ window.startRide = async function () {
  
   try{
  
-    await updateDoc(doc(db, "rides", activeRideId), {
-      status: "ongoing"
-    });
+   await updateDoc(doc(db, "rides", activeRideId), {
+  status: "ongoing"
+});
+
+const rideSnapshot = await getDoc(doc(db, "rides", activeRideId));
+
+const rideData = rideSnapshot.data();
+
+window.open(
+  `https://www.google.com/maps/dir/?api=1&destination=${rideData.dropLat},${rideData.dropLng}&travelmode=driving`,
+  "_blank"
+);
  
     document.getElementById("navStatus").innerText =
       "Ride Started";
