@@ -403,18 +403,6 @@ header button{
     <span class="slide-right">Gaadi</span>
   </div>
   <div style="position:absolute; top:20px; right:20px;">
-    <button onclick="toggleProfile()" style="
-background:#1e3a8a;
-color:white;
-border:none;
-padding:6px 12px;
-border-radius:20px;
-font-size:12px;
-cursor:pointer;
-margin-right:10px;
-">
-👤 Profile
-</button>
   <button onclick="logoutUser()" style="
     background:#dc2626;
     color:white;
@@ -426,50 +414,6 @@ margin-right:10px;
   ">
     Logout
   </button>
-</div>
-  <div id="profileBox" style="
-display:none;
-position:absolute;
-top:70px;
-right:20px;
-background:rgba(15,23,42,0.95);
-padding:15px;
-border-radius:18px;
-color:white;
-width:220px;
-backdrop-filter:blur(10px);
-box-shadow:0 0 20px rgba(0,150,255,0.4);
-z-index:999;
-">
-
-<h3>👤 User Profile</h3>
-
-<p>
-<b>Name:</b>
-<span id="profileName"></span>
-</p>
-
-<p>
-<b>Phone:</b>
-<span id="profilePhone"></span>
-<p>
-<b>Address:</b>
-<span id="profileAddress"></span>
-</p>
-
-<button onclick="editProfile()" style="
-margin-top:10px;
-background:#2563eb;
-border:none;
-padding:10px;
-border-radius:12px;
-color:white;
-cursor:pointer;
-width:100%;
-">
-✏️ Edit Profile
-</button>
-
 </div>
 </header>
 
@@ -729,7 +673,7 @@ function initMap() {
 }
 
 function listenDriverLocation() {
-  const ref = doc(window.db, "drivers", "driver1");
+  const ref = window.doc(window.db, "drivers", "driver1");
 
   window.onSnapshot(ref, (docSnap) => {
     if (!docSnap.exists()) return;
@@ -1471,70 +1415,6 @@ document.getElementById("callDriverBtn").href =
     ).style.display = "block";
 
   }
-
-};
- window.toggleProfile = function(){
-   
-  const box =
-  document.getElementById("profileBox");
-
-  if(box.style.display === "block"){
-
-    box.style.display = "none";
-
-  } else {
-
-    document.getElementById(
-      "profileName"
-    ).innerText =
-    localStorage.getItem("userName");
-
-    document.getElementById(
-      "profilePhone"
-    ).innerText =
-    localStorage.getItem("userPhone");
-    
-    document.getElementById(
-"profileAddress"
-).innerText =
-localStorage.getItem("userAddress") || "Not added";
-
-    box.style.display = "block";
-  }
-};
-  window.editProfile = function() {
-
-  let newName = prompt(
-    "Enter Name",
-    localStorage.getItem("userName")
-  );
-
-  let newAddress = prompt(
-    "Enter Address",
-    localStorage.getItem("userAddress") || ""
-  );
-
-  if(newName){
-
-    localStorage.setItem(
-      "userName",
-      newName
-    );
-
-  }
-
-  if(newAddress){
-
-    localStorage.setItem(
-      "userAddress",
-      newAddress
-    );
-
-  }
-
-  alert("Profile Updated ✅");
-
-  toggleProfile();
 
 };
 </script>
