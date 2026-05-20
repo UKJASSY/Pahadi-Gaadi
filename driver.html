@@ -307,10 +307,22 @@ button {
 }
 
 .earnings-card{
-  background:#ffffff;
-  border-radius:16px;
+  background:linear-gradient(145deg,#112240,#1b3358);
+  border:1px solid rgba(255,215,0,0.15);
+  border-radius:20px;
   padding:20px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+  box-shadow:
+    0 0 15px rgba(255,215,0,0.08),
+    0 4px 20px rgba(0,0,0,0.3);
+  color:white;
+  transition:0.3s;
+}
+
+.earnings-card:hover{
+  transform:translateY(-4px);
+  box-shadow:
+    0 0 20px rgba(255,215,0,0.18),
+    0 8px 24px rgba(0,0,0,0.4);
 }
 
 .earnings-card h3{
@@ -328,10 +340,14 @@ button {
 
 .ride-history{
   margin-top:30px;
-  background:#fff;
+  background:linear-gradient(145deg,#0f1c33,#162847);
+  border-radius:20px;
   padding:20px;
-  border-radius:16px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+  border:1px solid rgba(255,215,0,0.12);
+  box-shadow:
+    0 0 15px rgba(255,215,0,0.08),
+    0 4px 20px rgba(0,0,0,0.3);
+  color:white;
 }
 
 .ride-item{
