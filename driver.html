@@ -299,6 +299,49 @@ button {
   0 0 60px rgba(34,197,94,0.10);
 
 }
+  .earnings-section{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:15px;
+  margin-top:20px;
+}
+
+.earnings-card{
+  background:#ffffff;
+  border-radius:16px;
+  padding:20px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+.earnings-card h3{
+  margin:0;
+  font-size:16px;
+  color:#666;
+}
+
+.earnings-card p{
+  margin-top:10px;
+  font-size:28px;
+  font-weight:bold;
+  color:#111;
+}
+
+.ride-history{
+  margin-top:30px;
+  background:#fff;
+  padding:20px;
+  border-radius:16px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+.ride-item{
+  padding:12px;
+  border-bottom:1px solid #eee;
+}
+
+.ride-item:last-child{
+  border-bottom:none;
+}
 #navigationPanel .card{
 
   background:
@@ -467,7 +510,32 @@ Logout
 </h2>
   <div id="rides"></div>
   <div id="map"></div>
+  
+<div class="earnings-section">
 
+  <div class="earnings-card">
+    <h3>Total Earnings</h3>
+    <p id="totalEarnings">₹0</p>
+  </div>
+
+  <div class="earnings-card">
+    <h3>Today's Earnings</h3>
+    <p id="todayEarnings">₹0</p>
+  </div>
+
+  <div class="earnings-card">
+    <h3>Completed Rides</h3>
+    <p id="completedRides">0</p>
+  </div>
+
+</div>
+
+<div class="ride-history">
+  <h2>Ride History</h2>
+
+  <div id="rideHistoryList"></div>
+</div>
+  
 <div id="navigationPanel" style="display:none; margin-top:15px;">
 <div id="chatIcons">
 
