@@ -307,15 +307,59 @@ button {
 }
 
 .earnings-card{
-  background:linear-gradient(145deg,#112240,#1b3358);
-  border:1px solid rgba(255,215,0,0.15);
-  border-radius:20px;
+ .earnings-card{
+  background:rgba(255, 215, 0, 0.08);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,215,0,0.35);
+  border-radius:22px;
   padding:20px;
+  color:#ffd700;
+  position:relative;
+  overflow:hidden;
+
   box-shadow:
-    0 0 15px rgba(255,215,0,0.08),
-    0 4px 20px rgba(0,0,0,0.3);
-  color:white;
-  transition:0.3s;
+    0 0 10px rgba(255,215,0,0.25),
+    0 0 25px rgba(255,215,0,0.15),
+    inset 0 0 12px rgba(255,215,0,0.08);
+
+  transition:0.35s ease;
+}
+  .earnings-card::before{
+  content:'';
+  position:absolute;
+  top:-40%;
+  left:-60%;
+  width:220%;
+  height:220%;
+
+  background:linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.12),
+    transparent
+  );
+
+  transform:rotate(25deg);
+  animation:shine 4s linear infinite;
+}
+
+@keyframes shine{
+  0%{
+    transform:translateX(-100%) rotate(25deg);
+  }
+
+  100%{
+    transform:translateX(100%) rotate(25deg);
+  }
+}
+
+.earnings-card:hover{
+  transform:translateY(-5px) scale(1.02);
+
+  box-shadow:
+    0 0 18px rgba(255,215,0,0.45),
+    0 0 40px rgba(255,215,0,0.25),
+    inset 0 0 18px rgba(255,215,0,0.12);
 }
 
 .earnings-card:hover{
@@ -339,15 +383,22 @@ button {
 }
 
 .ride-history{
+ .ride-history{
   margin-top:30px;
-  background:linear-gradient(145deg,#0f1c33,#162847);
-  border-radius:20px;
-  padding:20px;
-  border:1px solid rgba(255,215,0,0.12);
+  padding:22px;
+  border-radius:22px;
+
+  background:rgba(255,215,0,0.05);
+
+  border:1px solid rgba(255,215,0,0.25);
+
   box-shadow:
-    0 0 15px rgba(255,215,0,0.08),
-    0 4px 20px rgba(0,0,0,0.3);
-  color:white;
+    0 0 15px rgba(255,215,0,0.12),
+    inset 0 0 10px rgba(255,215,0,0.06);
+
+  color:#ffd700;
+
+  backdrop-filter:blur(10px);
 }
 
 .ride-item{
